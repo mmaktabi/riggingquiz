@@ -76,7 +76,7 @@ class _QTextFieldState extends State<QTextField> {
   bool _obscureText = false;
   final List<TextInputFormatter> _inputFormatters = [];
   final TextInputType _keyboardType = TextInputType.text;
-
+// Korrigiert
   @override
   void initState() {
     super.initState();
