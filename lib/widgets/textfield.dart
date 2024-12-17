@@ -6,7 +6,6 @@ import 'package:rigging_quiz/widgets/icon.dart';
 
 class QTextField extends StatefulWidget {
   final String labelText;
-  final String? initialValue;
   final String? hintText;
   final String? suffixText;
   final String? Function(String?)? validator;
@@ -25,8 +24,6 @@ class QTextField extends StatefulWidget {
   final bool showCharCount;
   final double padding;
   final FocusNode? focusNode;
-  final bool numberField;
-  final bool rationalNumber;
   final TextInputType? keyboardType;
   final List<String>? autofillHints;
   final void Function(String)? onSubmitted;
@@ -35,7 +32,6 @@ class QTextField extends StatefulWidget {
     super.key,
     required this.labelText,
     this.hintText,
-    this.initialValue,
     this.validator,
     this.onChanged,
     this.onSaved,
@@ -52,12 +48,10 @@ class QTextField extends StatefulWidget {
     this.padding = 8,
     this.maxChars = 300,
     this.showCharCount = false,
-    this.numberField = false,
-    this.rationalNumber = false,
     this.suffixText = '',
     this.keyboardType,
     this.autofillHints,
-    this.onSubmitted, // Neuer Parameter für Enter
+    this.onSubmitted,
   });
 
   @override
@@ -65,80 +59,41 @@ class QTextField extends StatefulWidget {
 }
 
 class _QTextFieldState extends State<QTextField> {
-  FocusNode? _internalFocusNode;
-  TextEditingController _internalController = TextEditingController();
+  late FocusNode _focusNode;
+  late TextEditingController _controller;
 
-  FocusNode get _focusNode => widget.focusNode ?? _internalFocusNode!;
-
-  TextEditingController get _controller =>
-      widget.controller ?? _internalController;
   bool _isFieldFocused = false;
   bool _obscureText = false;
-  final List<TextInputFormatter> _inputFormatters = [];
-  final TextInputType _keyboardType = TextInputType.text;
+  int _charCount = 0;
 
   @override
   void initState() {
     super.initState();
-    // Erstelle interne Instanzen nur, wenn sie nicht extern bereitgestellt wurden
-    _internalController = widget.controller ?? TextEditingController();
-
-    _internalFocusNode = widget.focusNode ?? FocusNode(); // Erstelle nur einmal
-
+    // Fokus-Node und Controller initialisieren
+    _focusNode = widget.focusNode ?? FocusNode();
+    _controller = widget.controller ?? TextEditingController();
     _obscureText = widget.isPassword;
+
     _focusNode.addListener(_handleFocusChange);
-    // Aktualisiere den Zustand, wenn der Controller aktualisiert wird
-    if (_controller.text.isNotEmpty) {
-      _updateIsFieldFocused(true);
-    }
-    _setupInputFormatters();
+    _controller.addListener(() => setState(() {
+      _charCount = _controller.text.length;
+    }));
   }
+
   void _handleFocusChange() {
     if (mounted) {
-      if (_focusNode.hasFocus != _isFieldFocused) {
-        _updateIsFieldFocused(_focusNode.hasFocus);
-      }
+      setState(() {
+        _isFieldFocused = _focusNode.hasFocus;
+      });
     }
-  }
-
-
-  void _updateIsFieldFocused(bool isFocused) {
-    setState(() {
-      _isFieldFocused = isFocused;
-    });
-  }
-
-  void _handleHidePassword() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
-  }
-
-  void _setupInputFormatters() {
-    _inputFormatters.clear(); // Bestehende Formatters bereinigen
-    _inputFormatters.add(
-      LengthLimitingTextInputFormatter(widget.maxChars),
-    );
   }
 
   @override
   void dispose() {
     _focusNode.removeListener(_handleFocusChange);
-    _internalFocusNode;
-    if (widget.controller != null) {
-      _internalController.dispose();
-    }
+    if (widget.focusNode == null) _focusNode.dispose();
+    if (widget.controller == null) _controller.dispose();
     super.dispose();
-  }
-
-  bool _isTextTooLong = false;
-  int _charCount = 0;
-
-  void countChars(String value) {
-    setState(() {
-      _charCount = value.length;
-      _isTextTooLong = _charCount > widget.maxChars;
-    });
   }
 
   @override
@@ -146,99 +101,74 @@ class _QTextFieldState extends State<QTextField> {
     return Padding(
       padding: EdgeInsets.all(widget.padding),
       child: TextFormField(
-        autofillHints: widget.autofillHints,
-        focusNode: widget.focusNode ?? _focusNode,
-        controller: widget.controller ?? _controller,
+        controller: _controller,
+        focusNode: _focusNode,
         readOnly: widget.readOnly,
-        inputFormatters: _inputFormatters,
+        keyboardType: widget.keyboardType ?? TextInputType.text,
         obscureText: _obscureText,
-        keyboardType: widget.keyboardType ?? _keyboardType,
-        cursorColor: QColors.primaryColor,
-        cursorWidth: 1,
-        style: primaryTextStyle(color: QColors.primaryColor),
         maxLines: widget.maxLines,
         minLines: widget.minLines,
-        decoration: _inputDecoration(_isFieldFocused),
+        cursorColor: QColors.primaryColor,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(widget.maxChars),
+        ],
+        autofillHints: widget.autofillHints,
+        style: primaryTextStyle(color: QColors.primaryColor),
+        decoration: _inputDecoration(),
         validator: widget.validator,
         onSaved: widget.onSaved,
-        onFieldSubmitted: (value) {
-          if (widget.onSubmitted != null) {
-            widget.onSubmitted!(
-                value); // Callback aufrufen, wenn Enter gedrückt wird
-          }
-        },
-        onChanged: (value) {
-          if (widget.maxChars != 100) {
-            countChars(value);
-          }
-          if (widget.onChanged != null) {
-            widget.onChanged?.call(value);
-          }
-        },
+        onFieldSubmitted: widget.onSubmitted,
+        onChanged: widget.onChanged,
       ),
     );
   }
 
-  InputDecoration _inputDecoration(bool isFieldFocusedNotEmpty) {
+  InputDecoration _inputDecoration() {
     return InputDecoration(
-//contentPadding: EdgeInsets.symmetric(vertical:  15, horizontal: 16),
-      //  isCollapsed: true,
       hintText: widget.hintText,
-      label: _label(isFieldFocusedNotEmpty),
+      label: _label(),
       fillColor: widget.formFieldColor,
-      prefixIcon: widget.icon != null ? Icon(widget.icon, size: 23) : null,
-      suffixIcon: widget.isPassword ? _togglePasswordVisibility() : null,
-      errorStyle: primaryTextStyle(color: ColorsHelpers.red, fontSize: 11),
-      hintStyle: primaryTextStyle(),
-      suffixText: widget.showCharCount
-          ? _isTextTooLong
-          ? "$_charCount/${widget.maxChars}"
-          : "$_charCount/${widget.maxChars}"
-          : widget.suffixText,
-      suffixStyle: primaryTextStyle(fontSize: 13, color: QColors.primaryColor),
       filled: true,
-      border: const OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(22))),
+      prefixIcon:
+      widget.icon != null ? Icon(widget.icon, size: 23) : null,
+      suffixIcon: widget.isPassword
+          ? IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility_off : Icons.visibility,
+          color: QColors.primaryColor,
+        ),
+        onPressed: () => setState(() {
+          _obscureText = !_obscureText;
+        }),
+      )
+          : null,
+      suffixText: widget.showCharCount
+          ? "$_charCount/${widget.maxChars}"
+          : widget.suffixText,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(22),
+      ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: widget.focusedBorderColor),
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: widget.borderColor),
       ),
-      focusedErrorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: ColorsHelpers.red),
-      ),
-      errorBorder: const OutlineInputBorder(
-        borderSide: BorderSide(color: ColorsHelpers.red),
-      ),
     );
   }
 
-  Widget _label(bool isFieldFocused) {
+  Widget _label() {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
       decoration: BoxDecoration(
-        color: isFieldFocused ? QColors.primaryColor : QColors.transparent,
-        borderRadius: const BorderRadius.all(Radius.circular(5)),
+        color: _isFieldFocused ? QColors.primaryColor : Colors.transparent,
+        borderRadius: BorderRadius.circular(5),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4.0),
-        child: QText(
-          text: widget.labelText,
-          fontSize: 14,
-          color: isFieldFocused ? QColors.white : QColors.primaryColor,
-        ),
+      child: QText(
+        text: widget.labelText,
+        fontSize: 14,
+        color: _isFieldFocused ? QColors.white : QColors.primaryColor,
       ),
-    );
-  }
-
-  Widget _togglePasswordVisibility() {
-    return CustomIcon(
-      icon: _obscureText ? Icons.visibility_off : Icons.visibility,
-      size: 23,
-      color: QColors.primaryColor,
-      onTap: () {
-        _handleHidePassword();
-      },
     );
   }
 }
