@@ -77,20 +77,30 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-class AuthGate extends StatelessWidget {
+class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
+
+  @override
+  _AuthGateState createState() => _AuthGateState();
+}
+
+class _AuthGateState extends State<AuthGate> {
+  late final Stream<User?> _authStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _authStream = FirebaseAuth.instance.authStateChanges(); // Nur einmal erstellen
+  }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
-    final userService = Provider.of<UserService>(context);
 
     return StreamBuilder<User?>(
-      stream: userService.authStateChanges,
+      stream: _authStream, // Verwende den persistenten Stream
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting ||
-            userService.isLoading) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _indicator(height); // Ladeanzeige
         }
 
@@ -106,18 +116,13 @@ class AuthGate extends StatelessWidget {
               }
 
               if (tokenSnapshot.hasData) {
-                final claims = tokenSnapshot.data!.claims;
-                final isAdmin = claims?['admin'] == true;
-
                 return const HomeScreen();
               } else {
-                // Fehler beim Abrufen der Claims -> Zeige Anmeldeseite
                 return const SignInPage();
               }
             },
           );
         } else {
-          // Benutzer nicht eingeloggt -> Zeige Anmeldeseite
           return const SignInPage();
         }
       },
@@ -133,6 +138,7 @@ class AuthGate extends StatelessWidget {
     );
   }
 }
+
 
 class AdminAccessGuard extends StatelessWidget {
   final Widget child;
