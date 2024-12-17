@@ -1,0 +1,35 @@
+{
+  "rules": {
+    "categories": {
+      ".read": "auth != null", // Authentifizierte Benutzer dürfen lesen
+      ".write": "auth != null"
+    },
+    "game_sessions": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["friendUid"],
+
+    },
+      "duel_requests": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "users": {
+      ".indexOn": ["name", "searchName"], // Ermöglicht Indexierung für die Suche nach Namen
+
+        ".read": "auth != null",
+        ".write": "auth != null",
+      "friends": {
+          "$friendId": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+          }
+        }, 
+            "history": {
+            ".read": "auth != null",
+            ".write": "auth != null"
+        }
+   
+    }
+  }
+}

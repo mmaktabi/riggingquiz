@@ -1,0 +1,43 @@
+name: Deploy to Firebase Hosting on merge
+
+on:
+  push:
+    branches:
+      - main  # Workflow wird bei Pushes zum 'main'-Branch ausgelöst.
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Repository auschecken
+      - uses: actions/checkout@v4
+
+      # 2. Flutter installieren
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"  # Installiere Flutter 3.13.8 (enthält Dart >=3.4.3).
+
+      # 3. Überprüfe Dart-Version
+      - name: Check Dart version
+        run: dart --version
+
+      # 4. Abhängigkeiten installieren
+      - name: Install dependencies (with debug logs)
+        run: flutter pub get --verbose
+
+      # 5. Flutter Web-Build erstellen
+      - name: Build Flutter Web
+        run: flutter build web
+
+      # 6. Firebase Hosting Deployment
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIGGING_C0661 }}"
+          channelId: live
+          projectId: rigging-c0661
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
