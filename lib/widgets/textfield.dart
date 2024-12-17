@@ -76,14 +76,13 @@ class _QTextFieldState extends State<QTextField> {
   bool _obscureText = false;
   final List<TextInputFormatter> _inputFormatters = [];
   final TextInputType _keyboardType = TextInputType.text;
-// Korrigiert
+
   @override
   void initState() {
     super.initState();
     // Erstelle interne Instanzen nur, wenn sie nicht extern bereitgestellt wurden
-    if (widget.controller == null) {
-      _internalController = TextEditingController(text: widget.initialValue);
-    }
+    _internalController = widget.controller ?? TextEditingController();
+
     if (widget.focusNode == null) {
       _internalFocusNode = FocusNode();
     }
@@ -95,10 +94,14 @@ class _QTextFieldState extends State<QTextField> {
     }
     _setupInputFormatters();
   }
-
   void _handleFocusChange() {
-    _updateIsFieldFocused(_focusNode.hasFocus || _controller.text.isNotEmpty);
+    if (mounted) {
+      if (_focusNode.hasFocus != _isFieldFocused) {
+        _updateIsFieldFocused(_focusNode.hasFocus);
+      }
+    }
   }
+
 
   void _updateIsFieldFocused(bool isFocused) {
     setState(() {
@@ -190,8 +193,8 @@ class _QTextFieldState extends State<QTextField> {
       hintStyle: primaryTextStyle(),
       suffixText: widget.showCharCount
           ? _isTextTooLong
-              ? "$_charCount/${widget.maxChars}"
-              : "$_charCount/${widget.maxChars}"
+          ? "$_charCount/${widget.maxChars}"
+          : "$_charCount/${widget.maxChars}"
           : widget.suffixText,
       suffixStyle: primaryTextStyle(fontSize: 13, color: QColors.primaryColor),
       filled: true,

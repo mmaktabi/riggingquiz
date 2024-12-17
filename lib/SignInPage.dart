@@ -6,6 +6,7 @@ import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/utils/images.dart';
+import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:rigging_quiz/widgets/textfield.dart';
 
 class SignInPage extends StatefulWidget {
@@ -83,15 +84,23 @@ class _SignInPageState extends State<SignInPage> {
                     },
                   ),
                   if (_isSignUp)
-                    QTextField(
-                      labelText: 'Name',
-                      controller: _nameController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Bitte geben Sie einen Namen ein.';
-                        }
-                        return null;
-                      },
+                    Row(
+                      children: [
+                        Expanded(
+                          child: QTextField(
+                            labelText: 'Name',
+                            controller: _nameController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Bitte geben Sie einen Namen ein.';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),        Expanded(
+                          child: QText(text: "Text")
+                        ),
+                      ],
                     ),
                   if (_isSignUp)
                     QTextField(
