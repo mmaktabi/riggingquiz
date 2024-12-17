@@ -23,35 +23,32 @@ class QLayout extends StatelessWidget {
     this.backButton = false,
     this.showScore = false,
     this.addEmptyHeader = false,
-    this.maxWidth = 888, // Standard maximale Breite auf 888 gesetzt
+    this.maxWidth = 888,
     this.noScroll = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    // Aktuelle Bildschirmbreite
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    // Die Breite des Inhalts ist entweder die Bildschirmbreite oder maximal 888 Pixel
     double containerWidth = width > maxWidth ? maxWidth : width;
 
     return Scaffold(
-      resizeToAvoidBottomInset:
-          true, // Sicherstellen, dass die Größe bei Tastatur angepasst wird
+      resizeToAvoidBottomInset: true, // Anpassung bei der Tastatur
       body: Stack(
         children: [
           // Hintergrund
           Positioned.fill(
             child: Container(
-              color: QColors.white, // Hintergrundfarbe
+              color: QColors.white,
               child: SvgPicture.asset(
-                Images.ovalWithOutlineBottomHomeScreen, // SVG-Bild
+                Images.ovalWithOutlineBottomHomeScreen,
                 fit: BoxFit.cover,
-                alignment: Alignment.center, // Zentriere das Bild
+                alignment: Alignment.center,
               ),
             ),
           ),
-          // Der eigentliche Inhalt in der Mitte
+          // Der Hauptinhalt in Slivers
           Center(
             child: Container(
               decoration: const BoxDecoration(
@@ -66,15 +63,11 @@ class QLayout extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  stops: [
-                    0.0, // Anfang der primaryColor
-                    1.0, // Übergang von tertiaryColor zur secondaryColor
-                    1.0, // Ende der secondaryColor
-                  ],
+                  stops: [0.0, 1.0, 1.0],
                   colors: [
-                    QColors.primaryColor, // Primäre Farbe
-                    QColors.backgroundColor, // Sekundäre Farbe, unten
-                    QColors.backgroundColor, // Sekundäre Farbe, unten
+                    QColors.primaryColor,
+                    QColors.backgroundColor,
+                    QColors.backgroundColor,
                   ],
                 ),
               ),
@@ -83,36 +76,45 @@ class QLayout extends StatelessWidget {
               child: noScroll
                   ? child
                   : CustomScrollView(
-                      controller: scrollController,
-                      keyboardDismissBehavior:
-                          ScrollViewKeyboardDismissBehavior.manual,
-                      slivers: [
-                        SliverToBoxAdapter(
-                          child: Column(
-                            children: [
-                              if (backButton)
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.arrow_back,
-                                        size: 30, color: QColors.white),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ),
-                              if (addEmptyHeader)
-                                const SizedBox(
-                                  height: 50,
-                                ),
-                              if (showScore) const ScoreHeader(badges: []),
-                              child,
-                              const SizedBox(height: 100),
-                            ],
-                          ),
-                        ),
-                      ],
+                controller: scrollController,
+                keyboardDismissBehavior:
+                ScrollViewKeyboardDismissBehavior.manual,
+                slivers: [
+                  // SliverAppBar für den Back-Button
+                  if (backButton)
+                    SliverAppBar(
+                      pinned: false,
+                      floating: true,
+                      leading: IconButton(
+                        icon: const Icon(Icons.arrow_back,
+                            size: 30, color: QColors.white),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
                     ),
+                  // Optionaler leerer Header
+                  if (addEmptyHeader)
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: 50),
+                    ),
+                  // Score-Header anzeigen
+                  if (showScore)
+                    const SliverToBoxAdapter(
+                      child: ScoreHeader(badges: []),
+                    ),
+                  // Der Hauptinhalt als Sliver
+                  SliverToBoxAdapter(
+                    child: child,
+                  ),
+                  // Platz am Ende für Polsterung
+                  const SliverToBoxAdapter(
+                    child: SizedBox(height: 100),
+                  ),
+                ],
+              ),
             ),
           )
         ],
