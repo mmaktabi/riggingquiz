@@ -199,7 +199,6 @@ class _FindFriendState extends State<FindFriend> {
                     child: QTextField(
                       labelText: "Freund suchen",
                       controller: _searchController,
-                      padding: 3,
                       onSubmitted: (_) =>
                           _searchFriends(_searchController.text),
                     ),
