@@ -20,9 +20,6 @@ class TestData {
       difficulty: QuizDifficulty.medium,
       multiSelect: [
         {"label": "500 kg", "value": false},
-        {"label": "1000 kg", "value": true},
-        {"label": "2000 kg", "value": false},
-        {"label": "3000 kg", "value": false},
       ],
     ),
     Quiz(
