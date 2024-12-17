@@ -66,12 +66,12 @@ class QTextField extends StatefulWidget {
 
 class _QTextFieldState extends State<QTextField> {
   FocusNode? _internalFocusNode;
-  TextEditingController? _internalController;
+  TextEditingController _internalController = TextEditingController();
 
   FocusNode get _focusNode => widget.focusNode ?? _internalFocusNode!;
 
   TextEditingController get _controller =>
-      widget.controller ?? _internalController!;
+      widget.controller ?? _internalController;
   bool _isFieldFocused = false;
   bool _obscureText = false;
   final List<TextInputFormatter> _inputFormatters = [];
@@ -83,9 +83,8 @@ class _QTextFieldState extends State<QTextField> {
     // Erstelle interne Instanzen nur, wenn sie nicht extern bereitgestellt wurden
     _internalController = widget.controller ?? TextEditingController();
 
-    if (widget.focusNode == null) {
-      _internalFocusNode = FocusNode();
-    }
+    _internalFocusNode = widget.focusNode ?? FocusNode(); // Erstelle nur einmal
+
     _obscureText = widget.isPassword;
     _focusNode.addListener(_handleFocusChange);
     // Aktualisiere den Zustand, wenn der Controller aktualisiert wird
@@ -125,9 +124,9 @@ class _QTextFieldState extends State<QTextField> {
   @override
   void dispose() {
     _focusNode.removeListener(_handleFocusChange);
-    _internalFocusNode?.dispose();
+    _internalFocusNode;
     if (widget.controller != null) {
-      _internalController?.dispose();
+      _internalController.dispose();
     }
     super.dispose();
   }
