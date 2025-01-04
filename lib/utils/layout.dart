@@ -23,7 +23,7 @@ class QLayout extends StatelessWidget {
     this.backButton = false,
     this.showScore = false,
     this.addEmptyHeader = false,
-    this.maxWidth = 888,
+    this.maxWidth = 1000,
     this.noScroll = false,
   });
 
@@ -35,89 +35,75 @@ class QLayout extends StatelessWidget {
 
     return Scaffold(
       resizeToAvoidBottomInset: true, // Anpassung bei der Tastatur
-      body: Stack(
-        children: [
-          // Hintergrund
-          Positioned.fill(
-            child: Container(
-              color: QColors.white,
-              child: SvgPicture.asset(
-                Images.ovalWithOutlineBottomHomeScreen,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-              ),
+      body: Center(
+        child: Container(
+          decoration: const BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromRGBO(0, 49, 94, 0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 1),
+              )
+            ],
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 1.0, 1.0],
+              colors: [
+                QColors.primaryColor,
+                QColors.backgroundColor,
+                QColors.backgroundColor,
+              ],
             ),
           ),
-          // Der Hauptinhalt in Slivers
-          Center(
-            child: Container(
-              decoration: const BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 49, 94, 0.5),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: Offset(0, 1),
-                  )
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: [0.0, 1.0, 1.0],
-                  colors: [
-                    QColors.primaryColor,
-                    QColors.backgroundColor,
-                    QColors.backgroundColor,
-                  ],
+          constraints: BoxConstraints(minHeight: height),
+          width: containerWidth,
+          child: noScroll
+              ? child
+              : CustomScrollView(
+            controller: scrollController,
+            physics: BouncingScrollPhysics(), // oder ClampingScrollPhysics()
+
+            keyboardDismissBehavior:
+            ScrollViewKeyboardDismissBehavior.manual,
+            slivers: [
+              // SliverAppBar für den Back-Button
+              if (backButton)
+                SliverAppBar(
+                  pinned: false,
+                  floating: true,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back,
+                        size: 30, color: QColors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
                 ),
+              // Optionaler leerer Header
+              if (addEmptyHeader)
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 50),
+                ),
+              // Score-Header anzeigen
+              if (showScore)
+                const SliverToBoxAdapter(
+                  child: ScoreHeader(badges: []),
+                ),
+              // Der Hauptinhalt als Sliver
+              SliverToBoxAdapter(
+                child: child,
               ),
-              constraints: BoxConstraints(minHeight: height),
-              width: containerWidth,
-              child: noScroll
-                  ? child
-                  : CustomScrollView(
-                controller: scrollController,
-                keyboardDismissBehavior:
-                ScrollViewKeyboardDismissBehavior.manual,
-                slivers: [
-                  // SliverAppBar für den Back-Button
-                  if (backButton)
-                    SliverAppBar(
-                      pinned: false,
-                      floating: true,
-                      leading: IconButton(
-                        icon: const Icon(Icons.arrow_back,
-                            size: 30, color: QColors.white),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                      backgroundColor: Colors.transparent,
-                      elevation: 0,
-                    ),
-                  // Optionaler leerer Header
-                  if (addEmptyHeader)
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: 50),
-                    ),
-                  // Score-Header anzeigen
-                  if (showScore)
-                    const SliverToBoxAdapter(
-                      child: ScoreHeader(badges: []),
-                    ),
-                  // Der Hauptinhalt als Sliver
-                  SliverToBoxAdapter(
-                    child: child,
-                  ),
-                  // Platz am Ende für Polsterung
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: 100),
-                  ),
-                ],
+              // Platz am Ende für Polsterung
+              const SliverToBoxAdapter(
+                child: SizedBox(height: 100),
               ),
-            ),
-          )
-        ],
+            ],
+          ),
+        ),
       ),
     );
   }
