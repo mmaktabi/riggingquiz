@@ -62,11 +62,7 @@ class QLayout extends StatelessWidget {
           child: noScroll
               ? child
               : CustomScrollView(
-            controller: scrollController,
-            physics: AlwaysScrollableScrollPhysics(), // oder ClampingScrollPhysics()
-
-            keyboardDismissBehavior:
-            ScrollViewKeyboardDismissBehavior.manual,
+            controller: scrollController ?? ScrollController(),
             slivers: [
               // SliverAppBar für den Back-Button
               if (backButton)
