@@ -63,7 +63,7 @@ class QLayout extends StatelessWidget {
               ? child
               : CustomScrollView(
             controller: scrollController,
-            physics: BouncingScrollPhysics(), // oder ClampingScrollPhysics()
+            physics: AlwaysScrollableScrollPhysics(), // oder ClampingScrollPhysics()
 
             keyboardDismissBehavior:
             ScrollViewKeyboardDismissBehavior.manual,
