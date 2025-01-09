@@ -40,7 +40,7 @@ class _QLayoutState extends State<QLayout> {
     return Scaffold(
       body: CustomScrollView(
         controller: widget.scrollController,
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverPadding(
             padding: EdgeInsets.symmetric(horizontal: containerPadding),
