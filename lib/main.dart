@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -6,19 +5,17 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
 import 'package:rigging_quiz/Screens/management_system.dart/category_list_screen.dart';
-import 'package:rigging_quiz/data/quizmanager/DuelQuizProvider.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/SignInPage.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
-import 'package:rigging_quiz/main_web.dart';
 import 'package:rigging_quiz/utils/admin_auth/auth_screen.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
+import 'package:url_strategy/url_strategy.dart';
 import 'firebase_options.dart';
 
 void main() async {
-  if (kIsWeb) {
-   configureWeb();
-  }
+  setPathUrlStrategy();
+
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
