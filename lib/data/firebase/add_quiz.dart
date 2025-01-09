@@ -9,12 +9,12 @@ class QuizService {
   // Methode zum Abrufen von 7 zufälligen Fragen aus einer Kategorie
   Future<List<Quiz>> getRandomQuestions(String categoryId) async {
     final DatabaseReference questionsRef =
-        database.ref().child('categories/$categoryId/questions');
+    database.ref().child('categories/$categoryId/questions');
     final snapshot = await questionsRef.get();
 
     if (snapshot.exists) {
       final Map<String, dynamic> questionsData =
-          Map<String, dynamic>.from(snapshot.value as Map);
+      Map<String, dynamic>.from(snapshot.value as Map);
       List<String> allQuestionKeys = questionsData.keys.toList();
 
       // Wenn es weniger als 7 Fragen gibt, laden wir alle
@@ -57,7 +57,7 @@ class QuizService {
     final snapshot = await database.ref().child('categories').get();
     if (snapshot.exists) {
       final Map<String, dynamic> categoriesData =
-          Map<String, dynamic>.from(snapshot.value as Map);
+      Map<String, dynamic>.from(snapshot.value as Map);
       List<QuizCategory> categories = [];
 
       for (var entry in categoriesData.entries) {
@@ -76,7 +76,7 @@ class QuizService {
           description: data['description'] ?? 'Keine Beschreibung verfügbar',
           iconImage: data['iconImage'] ?? '',
           difficulty: QuizDifficulty.values.firstWhere(
-            (level) => level.name == data['difficulty'],
+                (level) => level.name == data['difficulty'],
             orElse: () => QuizDifficulty.beginner,
           ),
           quizzes: quizzes,
@@ -104,28 +104,28 @@ class QuizService {
   // Methode zum Hinzufügen einer neuen Kategorie
   Future<void> addCategory(QuizCategory category) async {
     final DatabaseReference categoryRef =
-        database.ref().child('categories').push();
+    database.ref().child('categories').push();
     await categoryRef.set(_categoryToMap(category));
   }
 
   // Methode zum Aktualisieren einer Kategorie
   Future<void> updateCategory(String categoryId, QuizCategory category) async {
     final DatabaseReference categoryRef =
-        database.ref().child('categories/$categoryId');
+    database.ref().child('categories/$categoryId');
     await categoryRef.update(_categoryToMap(category));
   }
 
   // Methode zum Löschen einer Kategorie
   Future<void> deleteCategory(String categoryId) async {
     final DatabaseReference categoryRef =
-        database.ref().child('categories/$categoryId');
+    database.ref().child('categories/$categoryId');
     await categoryRef.remove();
   }
 
   // Methode zum Hinzufügen einer neuen Frage zu einer Kategorie
   Future<void> addQuestionToCategory(String categoryId, Quiz quiz) async {
     final DatabaseReference questionRef =
-        database.ref().child('categories/$categoryId/questions').push();
+    database.ref().child('categories/$categoryId/questions').push();
     await questionRef.set(_quizToMap(quiz));
   }
 
@@ -133,14 +133,14 @@ class QuizService {
   Future<void> updateQuestion(
       String categoryId, String questionId, Quiz quiz) async {
     final DatabaseReference questionRef =
-        database.ref().child('categories/$categoryId/questions/$questionId');
+    database.ref().child('categories/$categoryId/questions/$questionId');
     await questionRef.update(_quizToMap(quiz));
   }
 
   // Methode zum Löschen einer Frage
   Future<void> deleteQuestion(String categoryId, String questionId) async {
     final DatabaseReference questionRef =
-        database.ref().child('categories/$categoryId/questions/$questionId');
+    database.ref().child('categories/$categoryId/questions/$questionId');
     await questionRef.remove();
   }
 
@@ -150,20 +150,20 @@ class QuizService {
       question: data['question'] ?? '',
       hint: data['hint'] ?? '',
       questionType: QuizQuestionType.values.firstWhere(
-        (type) => type.name == data['questionType'],
+            (type) => type.name == data['questionType'],
         orElse: () => QuizQuestionType.multipleChoice,
       ),
       difficulty: QuizDifficulty.values.firstWhere(
-        (level) => level.name == data['difficulty'],
+            (level) => level.name == data['difficulty'],
         orElse: () => QuizDifficulty.beginner,
       ),
       multiSelect: (data['multiSelect'] as List<dynamic>?)
-              ?.map((e) => Map<String, dynamic>.from(e as Map))
-              .toList() ??
+          ?.map((e) => Map<String, dynamic>.from(e as Map))
+          .toList() ??
           [],
       matchingPairs: (data['matchingPairs'] as List<dynamic>?)
-              ?.map((e) => Map<String, String>.from(e as Map))
-              .toList() ??
+          ?.map((e) => Map<String, String>.from(e as Map))
+          .toList() ??
           [],
       imageUrl: data['imageUrl'],
     );
@@ -178,7 +178,7 @@ class QuizService {
       'iconImage': category.iconImage,
       'difficulty': category.difficulty.name,
       'categoryColor':
-          '#${category.categoryColor.value.toRadixString(16).padLeft(8, '0')}', // Farbe als Hex-String speichern
+      '#${category.categoryColor.value.toRadixString(16).padLeft(8, '0')}', // Farbe als Hex-String speichern
     };
   }
 

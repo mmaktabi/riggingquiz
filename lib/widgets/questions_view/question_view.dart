@@ -140,7 +140,7 @@ class _QuestionViewState extends State<QuestionView> {
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: GestureDetector(
+      child:  GestureDetector(
         onTap: () => widget.onAnswerSelected(index),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 8),

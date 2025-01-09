@@ -136,7 +136,8 @@ class GameService {
       }
 
       final questionIds = questionsMap.keys.toList()..shuffle();
-      final selectedQuestions = questionIds.take(3).toList();
+      final selectedQuestions = questionIds.take(2).toList();
+      print('Ausgewählte Fragen: $selectedQuestions');
 
       await _gameSessionsRef.child(gameId).update({
         'questionIds': selectedQuestions,
@@ -176,19 +177,14 @@ class GameService {
 
       final playersData = Map<String, dynamic>.from(gameData['players']);
       final playerData = playersData[playerUid];
-
-      if (playerData == null) {
-        throw Exception('Spieler $playerUid nicht in der Spielsession.');
-      }
-
       int currentQuestionIndex = playerData['currentQuestionIndex'] ?? 0;
-      print('Aktueller Index für $playerUid: $currentQuestionIndex');
 
       final questionIds = List<String>.from(gameData['questionIds'] ?? []);
       if (currentQuestionIndex >= questionIds.length) {
         print('Keine weiteren Fragen.');
         return null;
       }
+
 
       final currentQuestionId = questionIds[currentQuestionIndex];
       final categoryId = gameData['categoryId'] ?? '';
@@ -242,6 +238,8 @@ class GameService {
           Map<String, dynamic>.from(playersData[playerUid] ?? {});
       final questionIds = List<String>.from(gameData['questionIds'] ?? []);
       final currentQuestionIndex = playerData['currentQuestionIndex'];
+      print('Anzahl der Fragen: ${questionIds.length}');
+      print('Frage IDs: $questionIds');
 
       // Setze Spielerstatus auf "finished", wenn alle Fragen beantwortet sind
       if (currentQuestionIndex >= questionIds.length) {
@@ -334,14 +332,14 @@ class GameService {
           int player2TotalScore = player2Score;
 
           if (player1Score > player2Score) {
-            player1TotalScore += 5; // Bonus für den Gewinner
+            player1TotalScore += 3; // Bonus für den Gewinner
           } else if (player2Score > player1Score) {
-            player2TotalScore += 5;
+            player2TotalScore += 3;
           }
           await _updateUserScoreAndHistory(
-              player1Uid, player1TotalScore, "rigging_quiz");
+              player1Uid, player1TotalScore, "RiggingDuell");
           await _updateUserScoreAndHistory(
-              player2Uid, player2TotalScore, "rigging_quiz");
+              player2Uid, player2TotalScore, "RiggingDuell");
 
           // Setze `scoresUpdated` auf true
           await gameSessionRef.update({'scoresUpdated': true});

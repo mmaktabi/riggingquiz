@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quiz_matcher/flutter_quiz_matcher.dart';
 import 'package:rigging_quiz/Screens/friends/duel_result_screen.dart';
 import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
@@ -24,6 +26,7 @@ class DuelGameScreen extends StatefulWidget {
 
 class _DuelGameScreenState extends State<DuelGameScreen> {
   final GameService _gameService = GameService();
+  final QuizProvider _quizProvider = QuizProvider();
   Quiz? currentQuestion;
   bool isLoading = true;
   bool isPressed = false;
@@ -41,10 +44,11 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
   @override
   void initState() {
     super.initState();
+
     listenToQuestionIndex();
     loadCurrentQuestion();
   }
-// aaaaaaAA123@
+
   @override
   void dispose() {
     _timer?.cancel();
@@ -170,7 +174,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
         selectedAnswers.length == correctIndices.length;
 
     final anyIncorrectSelected = selectedAnswers.any(
-      (index) => !(correctIndices?.contains(index) ?? false),
+          (index) => !(correctIndices?.contains(index) ?? false),
     );
 
     final isCorrect = allCorrectSelected && !anyIncorrectSelected;
@@ -178,7 +182,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
     setState(() {
       isPressed = true;
       feedback =
-          isCorrect ? "Yess! Das war richtig!" : "Oh nein! Das war falsch.";
+      isCorrect ? "Yess! Das war richtig!" : "Oh nein! Das war falsch.";
       showSubmitButton = false;
     });
 
@@ -201,21 +205,21 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
       child: isLoading
           ? QWidgets().progressIndicator
           : currentQuestion != null
-              ? QuestionView(
-                  showNextButton: false,
-                  question: currentQuestion!,
-                  index: currentQuestionIndex + 1,
-                  isPressed: isPressed,
-                  selectedAnswers: selectedAnswers,
-                  onAnswerSelected: _toggleAnswer,
-                  feedback: feedback,
-                  onNextQuestion: _nextQuestion,
-                  onSubmit: _submitAnswer,
-                  showSubmitButton: showSubmitButton,
-                  maxTime: maxTime,
-                  timeRemaining: timeRemaining,
-                )
-              : const Center(child: Text('Keine weiteren Fragen.')),
+          ? QuestionView(
+        showNextButton: false,
+        question: currentQuestion!,
+        index: currentQuestionIndex + 1,
+        isPressed: isPressed,
+        selectedAnswers: selectedAnswers,
+        onAnswerSelected: _toggleAnswer,
+        feedback: feedback,
+        onNextQuestion: _nextQuestion,
+        onSubmit: _submitAnswer,
+        showSubmitButton: showSubmitButton,
+        maxTime: maxTime,
+        timeRemaining: timeRemaining,
+      )
+          : const Center(child: Text('Keine weiteren Fragen.')),
     );
   }
 }

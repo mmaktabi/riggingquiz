@@ -6,7 +6,6 @@ import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/utils/images.dart';
-import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:rigging_quiz/widgets/textfield.dart';
 
 class SignInPage extends StatefulWidget {

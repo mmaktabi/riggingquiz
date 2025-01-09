@@ -55,11 +55,9 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
 
       // Aktuelle Benutzerdaten abrufen
       currentUserData = await _gameService.getUserDataMap(userUid);
-      print('Current User Data: $currentUserData');
 
       // Gegnerdaten abrufen
       opponentUserData = await _gameService.getUserDataMap(friendUid);
-      print('Opponent User Data: $opponentUserData');
 
       setState(() {
         isLoading = false;

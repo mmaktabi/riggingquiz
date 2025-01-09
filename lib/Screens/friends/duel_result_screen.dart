@@ -83,6 +83,7 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Fehler beim Laden der Ergebnisse: $e')),
       );
+
     }
   }
 
@@ -126,7 +127,9 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
       print('Spielstatus geändert: $status');
 
       if (status == 'finished') {
-        loadResults();
+        loadResults();     setState(() {
+          // UI aktualisieren
+        });
       } else {
         setState(() {
           isLoading = false;

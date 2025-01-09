@@ -1,8 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:provider/provider.dart';
-import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
 
