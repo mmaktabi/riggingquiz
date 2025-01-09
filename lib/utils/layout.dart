@@ -66,33 +66,35 @@ class _QLayoutState extends State<QLayout> {
           width: containerWidth,
           child: widget.noScroll
               ? widget.child
-              : SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Back-Button als Header
-                if (widget.backButton)
-                  AppBar(
-                    leading: IconButton(
-                      icon: const Icon(Icons.arrow_back,
-                          size: 30, color: QColors.white),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    backgroundColor: Colors.transparent,
-                    elevation: 0,
+              : ListView(
+            controller: widget.scrollController ,
+            physics: const BouncingScrollPhysics(), // Verbesserte Scroll-Physik
+            padding: EdgeInsets.zero,
+            children: [
+              // Back-Button als Header
+              if (widget.backButton)
+                AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back,
+                        size: 30, color: QColors.white),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
                   ),
-                // Optionaler leerer Header
-                if (widget.addEmptyHeader) const SizedBox(height: 50),
-                // Score-Header anzeigen
-                if (widget.showScore) const ScoreHeader(badges: []),
-                // Der Hauptinhalt
-                widget.child,
-                // Platz am Ende für Polsterung
-                const SizedBox(height: 100),
-              ],
-            ),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ),
+              // Optionaler leerer Header
+              if (widget.addEmptyHeader)
+                const SizedBox(height: 50),
+              // Score-Header anzeigen
+              if (widget.showScore)
+                const ScoreHeader(badges: []),
+              // Der Hauptinhalt
+              widget.child,
+              // Platz am Ende für Polsterung
+              const SizedBox(height: 100),
+            ],
           ),
         ),
       ),
