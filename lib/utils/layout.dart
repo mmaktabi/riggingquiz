@@ -61,35 +61,34 @@ class QLayout extends StatelessWidget {
           width: containerWidth,
           child: noScroll
               ? child
-              : ListView(
+              : SingleChildScrollView(
             controller: scrollController,
-            physics: const BouncingScrollPhysics(), // Verbesserte Scroll-Physik
-            padding: EdgeInsets.zero,
-            children: [
-              // Back-Button als Header
-              if (backButton)
-                AppBar(
-                  leading: IconButton(
-                    icon: const Icon(Icons.arrow_back,
-                        size: 30, color: QColors.white),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Back-Button als Header
+                if (backButton)
+                  AppBar(
+                    leading: IconButton(
+                      icon: const Icon(Icons.arrow_back,
+                          size: 30, color: QColors.white),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    backgroundColor: Colors.transparent,
+                    elevation: 0,
                   ),
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                ),
-              // Optionaler leerer Header
-              if (addEmptyHeader)
-                const SizedBox(height: 50),
-              // Score-Header anzeigen
-              if (showScore)
-                const ScoreHeader(badges: []),
-              // Der Hauptinhalt
-              child,
-              // Platz am Ende für Polsterung
-              const SizedBox(height: 100),
-            ],
+                // Optionaler leerer Header
+                if (addEmptyHeader) const SizedBox(height: 50),
+                // Score-Header anzeigen
+                if (showScore) const ScoreHeader(badges: []),
+                // Der Hauptinhalt
+                child,
+                // Platz am Ende für Polsterung
+                const SizedBox(height: 100),
+              ],
+            ),
           ),
         ),
       ),
