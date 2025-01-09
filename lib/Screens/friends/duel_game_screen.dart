@@ -44,7 +44,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
     listenToQuestionIndex();
     loadCurrentQuestion();
   }
-
+// aaaaaaAA123@
   @override
   void dispose() {
     _timer?.cancel();

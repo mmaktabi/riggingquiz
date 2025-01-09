@@ -62,7 +62,6 @@ class QLayout extends StatelessWidget {
           child: noScroll
               ? child
               : SingleChildScrollView(
-            controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
