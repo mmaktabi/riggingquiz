@@ -17,7 +17,6 @@ import 'package:rigging_quiz/utils/widget_package.dart';
 import 'firebase_options.dart';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -29,7 +28,6 @@ void main() async {
         ChangeNotifierProvider(create: (_) => UserService()),
         ChangeNotifierProvider(create: (_) => ScoreService()),
         ChangeNotifierProvider(create: (_) => QuizProvider()),
-
       ],
       child: MyApp(),
     ),
@@ -77,6 +75,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
 
@@ -86,47 +85,52 @@ class AuthGate extends StatefulWidget {
 
 class _AuthGateState extends State<AuthGate> {
   late final Stream<User?> _authStream;
+  IdTokenResult? _tokenResult;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _authStream = FirebaseAuth.instance.authStateChanges(); // Nur einmal erstellen
+    _authStream = FirebaseAuth.instance.authStateChanges();
+
+    // Lauschen auf Authentifizierungsänderungen und Token abrufen
+    _authStream.listen((user) async {
+      if (user != null) {
+        try {
+          IdTokenResult token = await user.getIdTokenResult(true);
+          setState(() {
+            _tokenResult = token;
+            _isLoading = false;
+          });
+        } catch (e) {
+          setState(() {
+            _tokenResult = null;
+            _isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          _tokenResult = null;
+          _isLoading = false;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
 
-    return StreamBuilder<User?>(
-      stream: _authStream, // Verwende den persistenten Stream
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return _indicator(height); // Ladeanzeige
-        }
-
-        if (snapshot.hasData) {
-          User? user = snapshot.data;
-
-          // Überprüfe die Claims des Benutzers
-          return FutureBuilder<IdTokenResult>(
-            future: user?.getIdTokenResult(true),
-            builder: (context, tokenSnapshot) {
-              if (tokenSnapshot.connectionState == ConnectionState.waiting) {
-                return _indicator(height);
-              }
-
-              if (tokenSnapshot.hasData) {
-                return const HomeScreen();
-              } else {
-                return const SignInPage();
-              }
-            },
-          );
-        } else {
-          return const SignInPage();
-        }
-      },
-    );
+    if (_isLoading) {
+      return _indicator(height);
+    } else {
+      // Falls _tokenResult vorhanden ist, wurde der Benutzer authentifiziert
+      if (_tokenResult != null) {
+        return const HomeScreen();
+      } else {
+        return const SignInPage();
+      }
+    }
   }
 
   Widget _indicator(double height) {
@@ -138,7 +142,6 @@ class _AuthGateState extends State<AuthGate> {
     );
   }
 }
-
 
 class AdminAccessGuard extends StatelessWidget {
   final Widget child;
@@ -156,11 +159,9 @@ class AdminAccessGuard extends StatelessWidget {
 
     // Prüfe die Claims des eingeloggten Benutzers
     return FutureBuilder<IdTokenResult>(
-      future: user.getIdTokenResult(
-          true), // Aktualisiere das Token, um aktuelle Claims zu erhalten
+      future: user.getIdTokenResult(true),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Zeige Ladeanzeige, bis die Claims geladen sind
           return QWidgets().progressIndicator;
         }
 
@@ -169,15 +170,11 @@ class AdminAccessGuard extends StatelessWidget {
           final isAdmin = claims?['admin'] == true;
 
           if (isAdmin) {
-            // Admin-Berechtigung erkannt, zeige das Kind-Widget
             return child;
           } else {
-            return AuthAdminScreen(
-              child: child,
-            ); // Rückgabe eines leeren Widgets, da die Weiterleitung erfolgt
+            return AuthAdminScreen(child: child);
           }
         } else {
-          // Fehler beim Abrufen der Claims -> Weiterleitung zur Anmeldeseite
           return AuthAdminScreen(child: child);
         }
       },

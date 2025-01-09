@@ -38,8 +38,7 @@ class _QLayoutState extends State<QLayout> {
     double containerPadding = width > widget.maxWidth ? width * 0.15 : 0;
 
     return Scaffold(
-      body: CustomScrollView(
-        controller: widget.scrollController,
+      body: CustomScrollView(scrollBehavior: MaterialScrollBehavior(),
         physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
           SliverPadding(
