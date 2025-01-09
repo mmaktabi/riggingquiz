@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,14 +10,17 @@ import 'package:rigging_quiz/Screens/management_system.dart/category_list_screen
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/SignInPage.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
+import 'package:rigging_quiz/main_web.dart';
 import 'package:rigging_quiz/utils/admin_auth/auth_screen.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
+  if (kIsWeb) {
+    mainWeb();
+  }
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -48,7 +52,6 @@ class MyApp extends StatelessWidget {
           child: CategoryListScreen(),
         ),
       ),
-      // Weitere Routen können hier hinzugefügt werden
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(
@@ -69,77 +72,64 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
-          routerConfig: _router, // Verwende den GoRouter
+          routerConfig: _router,
         );
       },
     );
   }
 }
 
-class AuthGate extends StatefulWidget {
+class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
   @override
-  _AuthGateState createState() => _AuthGateState();
-}
-
-class _AuthGateState extends State<AuthGate> {
-  late final Stream<User?> _authStream;
-  IdTokenResult? _tokenResult;
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _authStream = FirebaseAuth.instance.authStateChanges();
-
-    // Lauschen auf Authentifizierungsänderungen und Token abrufen
-    _authStream.listen((user) async {
-      if (user != null) {
-        try {
-          IdTokenResult token = await user.getIdTokenResult(true);
-          setState(() {
-            _tokenResult = token;
-            _isLoading = false;
-          });
-        } catch (e) {
-          setState(() {
-            _tokenResult = null;
-            _isLoading = false;
-          });
-        }
-      } else {
-        setState(() {
-          _tokenResult = null;
-          _isLoading = false;
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
-    double height = MediaQuery.of(context).size.height;
+    final authStream = FirebaseAuth.instance.authStateChanges();
 
-    if (_isLoading) {
-      return _indicator(height);
-    } else {
-      // Falls _tokenResult vorhanden ist, wurde der Benutzer authentifiziert
-      if (_tokenResult != null) {
-        return const HomeScreen();
-      } else {
-        return const SignInPage();
-      }
-    }
+    return StreamBuilder<User?>(
+      stream: authStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return _loadingIndicator();
+        }
+
+        if (snapshot.hasData) {
+          return FutureBuilder<bool>(
+            future: _checkAdminClaims(snapshot.data!),
+            builder: (context, claimsSnapshot) {
+              if (claimsSnapshot.connectionState == ConnectionState.waiting) {
+                return _loadingIndicator();
+              }
+
+              if (claimsSnapshot.data == true) {
+                return const HomeScreen();
+              } else {
+                return const SignInPage();
+              }
+            },
+          );
+        } else {
+          return const SignInPage();
+        }
+      },
+    );
   }
 
-  Widget _indicator(double height) {
+  Widget _loadingIndicator() {
     return QLayout(
-      child: SizedBox(
-        height: height,
+      child: Center(
         child: QWidgets().progressIndicator,
       ),
     );
+  }
+
+  Future<bool> _checkAdminClaims(User user) async {
+    try {
+      final idTokenResult = await user.getIdTokenResult(true);
+      return idTokenResult.claims?['admin'] == true;
+    } catch (e) {
+      return false;
+    }
   }
 }
 
@@ -153,31 +143,31 @@ class AdminAccessGuard extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
 
     if (user == null) {
-      // Wenn der Benutzer nicht eingeloggt ist, leite zur Anmeldeseite weiter
       return AuthAdminScreen(child: child);
     }
 
-    // Prüfe die Claims des eingeloggten Benutzers
-    return FutureBuilder<IdTokenResult>(
-      future: user.getIdTokenResult(true),
+    return FutureBuilder<bool>(
+      future: _checkAdminClaims(user),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return QWidgets().progressIndicator;
         }
 
-        if (snapshot.hasData) {
-          final claims = snapshot.data!.claims;
-          final isAdmin = claims?['admin'] == true;
-
-          if (isAdmin) {
-            return child;
-          } else {
-            return AuthAdminScreen(child: child);
-          }
+        if (snapshot.data == true) {
+          return child;
         } else {
           return AuthAdminScreen(child: child);
         }
       },
     );
+  }
+
+  Future<bool> _checkAdminClaims(User user) async {
+    try {
+      final idTokenResult = await user.getIdTokenResult(true);
+      return idTokenResult.claims?['admin'] == true;
+    } catch (e) {
+      return false;
+    }
   }
 }

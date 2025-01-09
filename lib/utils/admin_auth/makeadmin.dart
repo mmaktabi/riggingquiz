@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rigging_quiz/utils/admin_auth/auth_service%20.dart';
+import 'package:rigging_quiz/utils/admin_auth/auth_service.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/textfield.dart';

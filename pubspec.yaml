@@ -1,5 +1,5 @@
 name: rigging_quiz
-description: "RiggingQuiz ist ein interaktives Quizspiel für den Bereich Veranstaltungstechnik."
+description: "Ein interaktives Quiz für alle, die Spaß an Wissen und Herausforderungen haben! Teste dein Können in Rigging, Traversen und mehr. Mach mit und werde der Rigging-Meister!"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -64,7 +64,6 @@ dependencies:
   fl_chart: ^0.69.0
   line_chart: ^1.1.11
 
-  flame: ^1.19.0
   vector_math: ^2.1.4
   random_avatar: ^0.0.8
   provider: ^6.1.2
