@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
       designSize: const Size(360, 690),
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'rigging_quiz',
+          title: 'RiggingQuiz',
           theme: ThemeData(
             primarySwatch: Colors.blue,
           ),
