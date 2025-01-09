@@ -4,7 +4,7 @@ import 'package:rigging_quiz/utils/images.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rigging_quiz/widgets/score/score_header.dart';
 
-/// Diese Klasse enthält das Layout mit `Scaffold` und `CustomScrollView` mit Slivers
+/// Diese Klasse enthält das Layout mit `Scaffold` und einer verbesserten Scroll-Implementierung
 class QLayout extends StatelessWidget {
   final Widget child;
   final bool backButton;
@@ -61,14 +61,14 @@ class QLayout extends StatelessWidget {
           width: containerWidth,
           child: noScroll
               ? child
-              : CustomScrollView(
-            controller: scrollController ?? ScrollController(),
-            slivers: [
-              // SliverAppBar für den Back-Button
+              : ListView(
+            controller: scrollController,
+            physics: const BouncingScrollPhysics(), // Verbesserte Scroll-Physik
+            padding: EdgeInsets.zero,
+            children: [
+              // Back-Button als Header
               if (backButton)
-                SliverAppBar(
-                  pinned: false,
-                  floating: true,
+                AppBar(
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back,
                         size: 30, color: QColors.white),
@@ -81,22 +81,14 @@ class QLayout extends StatelessWidget {
                 ),
               // Optionaler leerer Header
               if (addEmptyHeader)
-                const SliverToBoxAdapter(
-                  child: SizedBox(height: 50),
-                ),
+                const SizedBox(height: 50),
               // Score-Header anzeigen
               if (showScore)
-                const SliverToBoxAdapter(
-                  child: ScoreHeader(badges: []),
-                ),
-              // Der Hauptinhalt als Sliver
-              SliverToBoxAdapter(
-                child: child,
-              ),
+                const ScoreHeader(badges: []),
+              // Der Hauptinhalt
+              child,
               // Platz am Ende für Polsterung
-              const SliverToBoxAdapter(
-                child: SizedBox(height: 100),
-              ),
+              const SizedBox(height: 100),
             ],
           ),
         ),
