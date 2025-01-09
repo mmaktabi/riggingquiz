@@ -1,38 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="RiggingQuiz ist ein interaktives Quizspiel für den Bereich Veranstaltungstechnik.">
+  <meta name="description" content="RiggingQuiz - Antworte Fragen im Veranstaltungstechnik Bereich">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="rigging_quiz">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="RiggingQuiz">
+  <link rel="apple-touch-icon" href="favicon.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/webp" href="favicon.png"/>
 
-  <title>rigging_quiz</title>
+  <title>RiggingQuiz</title>
   <link rel="manifest" href="manifest.json">
+
+  <script>
+    const serviceWorkerVersion = '{{flutter_service_worker_version}}';
+  </script>
+  <script src="flutter.js" defer></script>
+  <style>
+    body {
+      background-color: #f8f9fa;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 99%;
+      padding: 5px;
+      position: relative;
+    }
+    .spinner-border {
+      width: 275px;
+      height: 275px;
+      border-radius: 50%;
+      border: 8px solid transparent; /* Unsichtbarer Rand */
+      border-top: 8px solid #00315E; /* Sichtbare obere Linie */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: spin 2s linear infinite; /* Nur der Rand wird animiert */
+      position: relative;
+    }
+    .circle-image {
+      width: 272px;
+      height: 272px;
+      border-radius: 50%;
+      background-image: url('favicon.png');
+      background-size: cover;
+      background-position: center;
+      position: absolute; /* Statisch im Zentrum */
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+<div class="loading">
+  <div class="spinner-border">
+  </div>
+</div>
+<div class="circle-image"></div>
+
+<script type="text/javascript">
+</script>
+<script>
+  window.addEventListener('load', function(ev) {
+    {{flutter_js}}
+    {{flutter_build_config}}
+
+    _flutter.loader.load({
+      serviceWorker: {
+        serviceWorkerVersion: serviceWorkerVersion,
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine().then(function(appRunner) {
+          appRunner.runApp();
+        });
+      }
+    });
+  });
+</script>
+
 </body>
 </html>
