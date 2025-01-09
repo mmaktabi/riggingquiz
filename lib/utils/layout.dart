@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:rigging_quiz/widgets/score/score_header.dart';
 
 /// Diese Klasse enthält das Layout mit `Scaffold` und einer verbesserten Scroll-Implementierung
-class QLayout extends StatelessWidget {
+class QLayout extends StatefulWidget {
   final Widget child;
   final bool backButton;
   final bool showScore;
@@ -28,10 +28,15 @@ class QLayout extends StatelessWidget {
   });
 
   @override
+  State<QLayout> createState() => _QLayoutState();
+}
+
+class _QLayoutState extends State<QLayout> {
+  @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    double containerWidth = width > maxWidth ? maxWidth : width;
+    double containerWidth = width > widget.maxWidth ? widget.maxWidth : width;
 
     return Scaffold(
       resizeToAvoidBottomInset: true, // Anpassung bei der Tastatur
@@ -59,14 +64,14 @@ class QLayout extends StatelessWidget {
           ),
           constraints: BoxConstraints(minHeight: height),
           width: containerWidth,
-          child: noScroll
-              ? child
+          child: widget.noScroll
+              ? widget.child
               : SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Back-Button als Header
-                if (backButton)
+                if (widget.backButton)
                   AppBar(
                     leading: IconButton(
                       icon: const Icon(Icons.arrow_back,
@@ -79,11 +84,11 @@ class QLayout extends StatelessWidget {
                     elevation: 0,
                   ),
                 // Optionaler leerer Header
-                if (addEmptyHeader) const SizedBox(height: 50),
+                if (widget.addEmptyHeader) const SizedBox(height: 50),
                 // Score-Header anzeigen
-                if (showScore) const ScoreHeader(badges: []),
+                if (widget.showScore) const ScoreHeader(badges: []),
                 // Der Hauptinhalt
-                child,
+                widget.child,
                 // Platz am Ende für Polsterung
                 const SizedBox(height: 100),
               ],
