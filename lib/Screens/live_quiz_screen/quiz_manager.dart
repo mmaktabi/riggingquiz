@@ -6,62 +6,113 @@ import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
 
-class QuizManager {
-  final QuizCategory quizCategory;
-  final BuildContext context; // Hinzugefügt
-  int currentStepIndex = 0;
-  int totalPoints = 0;
-  int correctAnswers = 0;
-  int wrongAnswers = 0;
-  List<int> selectedAnswers = [];
-  List<List<int>> selectedAnswersPerQuestion = [];
-  bool isPressed = false;
-  String currentFeedback = "";
-  int timeRemaining = 20;
-  final int maxTime = 20; // Hinzugefügt
+class QuizProvider with ChangeNotifier {
+  late QuizCategory _quizCategory;
+  int _currentStepIndex = 0;
+  int _totalPoints = 0;
+  int _correctAnswers = 0;
+  int _wrongAnswers = 0;
+  List<int> _selectedAnswers = [];
+  List<List<int>> _selectedAnswersPerQuestion = [];
+  bool _isPressed = false;
+  String _currentFeedback = "";
+  int _timeRemaining = 20;
+  final int _maxTime = 20;
   Timer? _timer;
-  final Function onTimeExpired;
+  bool _isLoading = true;
 
-  QuizManager(
-    this.quizCategory, {
-    required this.onTimeExpired,
-    required this.context, // Hinzugefügt
-  }) {
-    startTimer();
+  // Getter für den Ladezustand
+  bool get isLoading => _isLoading;
+
+  void initializeQuiz(QuizCategory quizCategory) {
+    _quizCategory = quizCategory;
+    resetState();
+    _isLoading = false; // Laden abgeschlossen
+    startTimer(() {
+      handleTimeExpired();
+    });
+    notifyListeners();
   }
 
-  void startTimer() {
+
+  void resetState() {
+    _currentStepIndex = 0;
+    _totalPoints = 0;
+    _correctAnswers = 0;
+    _wrongAnswers = 0;
+    _selectedAnswers = [];
+    _selectedAnswersPerQuestion = [];
+    _isPressed = false;
+    _currentFeedback = "";
+    _timeRemaining = _maxTime;
+    _isLoading = true; // Ladezustand aktivieren
+
+    notifyListeners();
+  }
+
+  // Getters
+  QuizCategory get quizCategory => _quizCategory;
+  int get currentStepIndex => _currentStepIndex;
+  int get totalPoints => _totalPoints;
+  int get correctAnswers => _correctAnswers;
+  int get wrongAnswers => _wrongAnswers;
+  List<int> get selectedAnswers => _selectedAnswers;
+  bool get isPressed => _isPressed;
+  String get currentFeedback => _currentFeedback;
+  int get timeRemaining => _timeRemaining;
+  int get maxTime => _maxTime;
+
+  // Timer-Methoden
+  void startTimer(Function onTimeExpired) {
     _timer?.cancel();
-    timeRemaining = maxTime; // Hinzugefügt
+    _timeRemaining = _maxTime;
+    print('Starting timer with $_timeRemaining seconds');
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (timeRemaining <= 0) {
+      if (_timeRemaining <= 0) {
         timer.cancel();
         onTimeExpired();
       } else {
-        timeRemaining--;
+        _timeRemaining--;
+        notifyListeners();
       }
     });
   }
 
   void resetTimer() {
-    timeRemaining = maxTime; // Geändert
-    startTimer();
+    _timeRemaining = _maxTime;
+    startTimer(() {
+      handleTimeExpired();
+    });
   }
 
-  void toggleAnswer(int index) {
-    if (isPressed) return;
+  void stopTimer() {
+    _timer?.cancel();
+  }
 
-    if (selectedAnswers.contains(index)) {
-      selectedAnswers.remove(index);
+  void handleTimeExpired() {
+    _wrongAnswers++;
+    _currentFeedback = "Zeit abgelaufen!";
+    _isPressed = true;
+    stopTimer();
+    notifyListeners();
+  }
+
+  // Quiz-Methoden
+  void toggleAnswer(int index) {
+    if (_isPressed) return;
+
+    if (_selectedAnswers.contains(index)) {
+      _selectedAnswers.remove(index);
     } else {
-      selectedAnswers.add(index);
+      _selectedAnswers.add(index);
     }
+    notifyListeners();
   }
 
   void submitAnswer() {
-    if (isPressed || selectedAnswers.isEmpty) return;
+    if (_isPressed || _selectedAnswers.isEmpty) return;
 
-    final currentQuestion = quizCategory.quizzes[currentStepIndex];
+    final currentQuestion = _quizCategory.quizzes[_currentStepIndex];
     final correctIndices = currentQuestion.multiSelect
         ?.asMap()
         .entries
@@ -70,81 +121,79 @@ class QuizManager {
         .toList();
 
     final allCorrectSelected = correctIndices != null &&
-        correctIndices.every((index) => selectedAnswers.contains(index)) &&
-        selectedAnswers.length == correctIndices.length;
+        correctIndices.every((index) => _selectedAnswers.contains(index)) &&
+        _selectedAnswers.length == correctIndices.length;
 
-    final anyIncorrectSelected = selectedAnswers
+    final anyIncorrectSelected = _selectedAnswers
         .any((index) => !(correctIndices?.contains(index) ?? false));
 
     final isCorrect = allCorrectSelected && !anyIncorrectSelected;
 
     if (isCorrect) {
-      timeRemaining = 0;
-      totalPoints += currentQuestion.score;
-      correctAnswers++;
-      currentFeedback = "Yess! Das war richtig!";
+      _totalPoints += currentQuestion.score;
+      _correctAnswers++;
+      _currentFeedback = "Yess! Das war richtig!";
     } else {
-      wrongAnswers++;
-      currentFeedback = "Oh nein! Das war falsch.";
+      _wrongAnswers++;
+      _currentFeedback = "Oh nein! Das war falsch.";
     }
 
-    isPressed = true;
-    _timer?.cancel();
+    _isPressed = true;
+    stopTimer();
+    notifyListeners();
   }
 
-  void handleTimeExpired() {
-    wrongAnswers++;
-    currentFeedback = "Zeit abgelaufen!";
-    isPressed = true;
-  }
+  void nextQuestion(BuildContext context) {
+    if (!_isPressed) return;
 
-  void nextQuestion() {
-    if (!isPressed) return;
+    _selectedAnswersPerQuestion.add(List.from(_selectedAnswers));
+    _selectedAnswers = [];
+    _isPressed = false;
+    _currentFeedback = "";
 
-    selectedAnswersPerQuestion.add(List.from(selectedAnswers));
-    selectedAnswers = [];
-    isPressed = false;
-    currentFeedback = "";
-
-    if (currentStepIndex + 1 < quizCategory.quizzes.length) {
-      currentStepIndex++;
+    if (_currentStepIndex + 1 < _quizCategory.quizzes.length) {
+      _currentStepIndex++;
       resetTimer();
     } else {
-      _endQuiz();
+      endQuiz(context); // Endquiz aufrufen
     }
+    notifyListeners();
   }
 
-  void _endQuiz() {
-    _timer?.cancel(); // Timer stoppen
-    selectedAnswersPerQuestion.add(List.from(selectedAnswers));
-    int schaekel = correctAnswers == 7 ? 8 : correctAnswers;
+
+  void endQuiz(BuildContext context) {
+    stopTimer(); // Sicherstellen, dass der Timer gestoppt wird
+    _selectedAnswersPerQuestion.add(List.from(_selectedAnswers));
+
+    // Berechnung der Schäkels (Punkte)
+    int schaekel = _correctAnswers == 7 ? 8 : _correctAnswers;
+
+    // Ergebnisse in den Score-Service speichern
     ScoreService scoreService = ScoreService();
     final userService = Provider.of<UserService>(context, listen: false);
 
     scoreService.updateScore(userService.uid ?? "", schaekel);
-    scoreService.updateHistory(
-        userService.uid ?? "", schaekel, quizCategory.name);
+    scoreService.updateHistory(userService.uid ?? "", schaekel, _quizCategory.name);
 
+    // Result-Objekt erstellen
     final result = ResultModel(
-      totalPoints: totalPoints,
-      correctAnswers: correctAnswers,
-      wrongAnswers: wrongAnswers,
-      schaekel: totalPoints,
+      totalPoints: _totalPoints,
+      correctAnswers: _correctAnswers,
+      wrongAnswers: _wrongAnswers,
+      schaekel: schaekel,
     );
 
+    // Navigation zur Review-Seite
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => ReviewQuizScreen(
           result: result,
-          questions: quizCategory.quizzes,
-          selectedAnswersPerQuestion: selectedAnswersPerQuestion,
+          questions: _quizCategory.quizzes,
+          selectedAnswersPerQuestion: _selectedAnswersPerQuestion,
         ),
       ),
     );
   }
 
-  void dispose() {
-    _timer?.cancel();
-  }
 }

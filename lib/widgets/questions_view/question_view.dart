@@ -43,28 +43,6 @@ class QuestionView extends StatefulWidget {
 }
 
 class _QuestionViewState extends State<QuestionView> {
-  late int _timeRemaining;
-
-  @override
-  void initState() {
-    super.initState();
-    _timeRemaining = widget.timeRemaining;
-  }
-
-  void _handleTimeExpired() {
-    if (_timeRemaining > 0) {
-      _timeRemaining = 0;
-      widget.onTimeExpired?.call();
-    }
-  }
-
-  void _updateTimeRemaining(int newTime) {
-    if (_timeRemaining != newTime) {
-      setState(() {
-        _timeRemaining = newTime;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +89,10 @@ class _QuestionViewState extends State<QuestionView> {
   Widget _buildTimer() {
     return TimerIndicator(
       maxTime: widget.maxTime,
-      initialTime: widget.maxTime - _timeRemaining,
-      onTimeExpired: _handleTimeExpired,
+      initialTime: widget.timeRemaining,
     );
   }
+
 
   Widget _buildAnswerOptions() {
     switch (widget.question.questionType) {

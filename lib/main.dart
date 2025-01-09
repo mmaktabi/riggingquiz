@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
 import 'package:rigging_quiz/Screens/management_system.dart/category_list_screen.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/SignInPage.dart';
@@ -27,6 +28,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => UserService()),
         ChangeNotifierProvider(create: (_) => ScoreService()),
+        ChangeNotifierProvider(create: (_) => QuizProvider()),
+
       ],
       child: MyApp(),
     ),

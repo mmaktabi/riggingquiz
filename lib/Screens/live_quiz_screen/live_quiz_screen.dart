@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/widgets/questions_view/question_view.dart';
-import 'quiz_manager.dart';
 
 class LiveQuizScreen extends StatefulWidget {
   final QuizCategory quizCategory;
@@ -14,68 +15,52 @@ class LiveQuizScreen extends StatefulWidget {
 }
 
 class _LiveQuizScreenState extends State<LiveQuizScreen> {
-  late QuizManager _quizManager;
-
   @override
   void initState() {
     super.initState();
-    _quizManager = QuizManager(
-      widget.quizCategory,
-      onTimeExpired: _handleTimeExpired,
-      context: context,
-    );
-  }
-
-  void _handleTimeExpired() {
-    setState(() {
-      _quizManager.handleTimeExpired(); // Kontext nicht mehr notwendig
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final quizProvider = Provider.of<QuizProvider>(context, listen: false);
+      quizProvider.initializeQuiz(widget.quizCategory);
     });
-  }
-
-  void _onAnswerSelected(int index) {
-    setState(() {
-      _quizManager.toggleAnswer(index);
-    });
-  }
-
-  void _onSubmit() {
-    setState(() {
-      _quizManager.submitAnswer();
-    });
-  }
-
-  void _nextQuestion() {
-    setState(() {
-      _quizManager.nextQuestion(); // Kontext nicht mehr notwendig
-    });
-  }
-
-  @override
-  void dispose() {
-    _quizManager.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final quizProvider = Provider.of<QuizProvider>(context);
+
+    // Ladezustand überprüfen
+    if (quizProvider.isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    // Wenn das Quiz geladen ist, zeige die Fragen an
     return QLayout(
       child: Column(
         children: [
           QuestionView(
             showNextButton: true,
-            question: _quizManager
-                .quizCategory.quizzes[_quizManager.currentStepIndex],
-            index: _quizManager.currentStepIndex + 1,
-            isPressed: _quizManager.isPressed,
-            selectedAnswers: _quizManager.selectedAnswers,
-            onAnswerSelected: _onAnswerSelected,
-            feedback: _quizManager.currentFeedback,
-            onNextQuestion: _nextQuestion,
-            onSubmit: _onSubmit,
-            showSubmitButton: !_quizManager.isPressed,
-            maxTime: _quizManager.maxTime,
-            timeRemaining: _quizManager.timeRemaining,
-            onTimeExpired: _handleTimeExpired, // Hinzugefügt
+            question: quizProvider.quizCategory.quizzes[quizProvider.currentStepIndex],
+            index: quizProvider.currentStepIndex + 1,
+            isPressed: quizProvider.isPressed,
+            selectedAnswers: quizProvider.selectedAnswers,
+            onAnswerSelected: (index) {
+              quizProvider.toggleAnswer(index);
+            },
+            feedback: quizProvider.currentFeedback,
+            onNextQuestion: () {
+              quizProvider.nextQuestion(context);
+            },
+            onSubmit: () {
+              quizProvider.submitAnswer();
+            },
+            showSubmitButton: !quizProvider.isPressed,
+            maxTime: quizProvider.maxTime,
+            timeRemaining: quizProvider.timeRemaining,
+            onTimeExpired: () {
+              quizProvider.handleTimeExpired();
+            },
           ),
         ],
       ),
