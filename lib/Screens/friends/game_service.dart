@@ -136,7 +136,7 @@ class GameService {
       }
 
       final questionIds = questionsMap.keys.toList()..shuffle();
-      final selectedQuestions = questionIds.take(2).toList();
+      final selectedQuestions = questionIds.take(7).toList();
       print('Ausgewählte Fragen: $selectedQuestions');
 
       await _gameSessionsRef.child(gameId).update({

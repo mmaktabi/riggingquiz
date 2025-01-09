@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,12 +10,15 @@ import 'package:rigging_quiz/data/quizmanager/DuelQuizProvider.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/SignInPage.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
+import 'package:rigging_quiz/main_web.dart';
 import 'package:rigging_quiz/utils/admin_auth/auth_screen.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
-
+  if (kIsWeb) {
+   configureWeb();
+  }
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
