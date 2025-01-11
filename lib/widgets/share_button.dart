@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rigging_quiz/widgets/button.dart';
-import 'package:share_plus/share_plus.dart';
+// import 'package:share_plus/share_plus.dart';
 import 'package:universal_html/html.dart' as html;
 
 class ShareButton extends StatelessWidget {
@@ -24,7 +24,7 @@ Mach mit und werde der Rigging-Meister! 🏆
       onPressed: () async {
         try {
           // Versuche zuerst, das native Teilen auszuführen
-          await Share.share(shareText);
+          //   await Share.share(shareText);
         } catch (e) {
           // Fallback für Web: Öffne die Teilen-URL
           html.window.open('mailto:?body=$shareText', '_blank');
