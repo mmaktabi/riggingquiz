@@ -177,22 +177,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.8"
-  desktop_webview_auth:
-    dependency: transitive
-    description:
-      name: desktop_webview_auth
-      sha256: c4dce73346a7be7243c90ac3b1a68586d9f0e2c2710e81e07d758e80a6ebd920
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.15"
-  email_validator:
-    dependency: transitive
-    description:
-      name: email_validator
-      sha256: e9a90f27ab2b915a27d7f9c2a7ddda5dd752d6942616ee83529b686fc086221b
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.17"
   equatable:
     dependency: transitive
     description:
@@ -201,14 +185,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.7"
-  facebook_auth_desktop:
-    dependency: transitive
-    description:
-      name: facebook_auth_desktop
-      sha256: e6cc4d6f50a1d67d99e7dac7d77a40fe27122496e224cb708ae168d7d9aac0ac
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.3"
   fake_async:
     dependency: transitive
     description:
@@ -337,22 +313,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.6+6"
-  firebase_dynamic_links:
-    dependency: transitive
-    description:
-      name: firebase_dynamic_links
-      sha256: e4984adcdeaa69f22fb60909c5ff211b9ef14d0d0f9362e4209eeef3e552b5e2
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.0"
-  firebase_dynamic_links_platform_interface:
-    dependency: transitive
-    description:
-      name: firebase_dynamic_links_platform_interface
-      sha256: f41a911267727d241e6d3453718a4b0a95ac33ee0a6e086923f9cab4acd31806
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.7"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -377,62 +337,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.10.7"
-  firebase_ui_auth:
-    dependency: "direct main"
-    description:
-      name: firebase_ui_auth
-      sha256: "66fbbd52b608e6647b6454db23cfd612e9e9be9df6fb633f2aa65479bde29b30"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.16.0"
-  firebase_ui_localizations:
-    dependency: "direct main"
-    description:
-      name: firebase_ui_localizations
-      sha256: "7c0d9f59a7f8dfe728019bc7ac5dc85e119f59ec9ede2e01b128b39b8492090b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.13.0"
-  firebase_ui_oauth:
-    dependency: transitive
-    description:
-      name: firebase_ui_oauth
-      sha256: "26fc29107b5ec0c8b1e8a9eb2234f544a5340e87ca4a9741ba2d5ecec0c39e10"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.6.0"
-  firebase_ui_oauth_apple:
-    dependency: "direct main"
-    description:
-      name: firebase_ui_oauth_apple
-      sha256: "52b4608939f8421fa456286c31a4bb565ada2bb894bac8bc6164056c3e1c43c5"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.0"
-  firebase_ui_oauth_facebook:
-    dependency: "direct main"
-    description:
-      name: firebase_ui_oauth_facebook
-      sha256: "0371053b9026d305fd7390fb12a37f80ef6869742bc2c310ff34c6b5b4198a40"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.3.0"
-  firebase_ui_oauth_google:
-    dependency: "direct main"
-    description:
-      name: firebase_ui_oauth_google
-      sha256: "5149f812af862cf3ce22358ec13356e721279cb2c40c09c78b6df4d1230333c2"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
-  firebase_ui_shared:
-    dependency: transitive
-    description:
-      name: firebase_ui_shared
-      sha256: f1d07c130a39104d32fba1dab274b7bcb13be2bf4e652624a4ccabb58f9781f1
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.1"
   fixnum:
     dependency: transitive
     description:
@@ -470,30 +374,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  flutter_facebook_auth:
-    dependency: transitive
-    description:
-      name: flutter_facebook_auth
-      sha256: bc455122d3ea14fd0887b1a0f74d0ead845c04bfc2e68c64d9a701367d665724
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.0"
-  flutter_facebook_auth_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_facebook_auth_platform_interface
-      sha256: "86630c4dbba1c20fba26ea9e59ad0d48f5ff59e7373cacd36f916160186f9ce9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
-  flutter_facebook_auth_web:
-    dependency: transitive
-    description:
-      name: flutter_facebook_auth_web
-      sha256: "22dca8091409309ad85b9f430fbd8f57b686276979da5195e7e97587352567ce"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.0.0"
   flutter_launcher_icons:
     dependency: "direct main"
     description:
@@ -510,11 +390,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -531,54 +406,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.0.4"
-  flutter_secure_storage:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage
-      sha256: "9cad52d75ebc511adfae3d447d5d13da15a55a92c9410e50f67335b6d21d16ea"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.2.4"
-  flutter_secure_storage_linux:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_linux
-      sha256: bf7404619d7ab5c0a1151d7c4e802edad8f33535abfbeff2f9e1fe1274e2d705
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.2"
-  flutter_secure_storage_macos:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_macos
-      sha256: "6c0a2795a2d1de26ae202a0d78527d163f4acbb11cde4c75c670f3a0fc064247"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.3"
-  flutter_secure_storage_platform_interface:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_platform_interface
-      sha256: cf91ad32ce5adef6fba4d736a542baca9daf3beac4db2d04be350b87f69ac4a8
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.1.2"
-  flutter_secure_storage_web:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_web
-      sha256: f4ebff989b4f07b2656fb16b47852c0aab9fed9b4ec1c70103368337bc1886a9
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.1"
-  flutter_secure_storage_windows:
-    dependency: transitive
-    description:
-      name: flutter_secure_storage_windows
-      sha256: b20b07cb5ed4ed74fc567b78a72936203f587eba460af1df11281c9326cd3709
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.1.2"
   flutter_svg:
     dependency: "direct main"
     description:
@@ -613,54 +440,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.6.3"
-  google_identity_services_web:
-    dependency: transitive
-    description:
-      name: google_identity_services_web
-      sha256: "55580f436822d64c8ff9a77e37d61f5fb1e6c7ec9d632a43ee324e2a05c3c6c9"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.3"
-  google_sign_in:
-    dependency: transitive
-    description:
-      name: google_sign_in
-      sha256: fad6ddc80c427b0bba705f2116204ce1173e09cf299f85e053d57a55e5b2dd56
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.2.2"
-  google_sign_in_android:
-    dependency: transitive
-    description:
-      name: google_sign_in_android
-      sha256: "3b96f9b6cf61915f73cbe1218a192623e296a9b8b31965702503649477761e36"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.1.34"
-  google_sign_in_ios:
-    dependency: transitive
-    description:
-      name: google_sign_in_ios
-      sha256: "83f015169102df1ab2905cf8abd8934e28f87db9ace7a5fa676998842fed228a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.7.8"
-  google_sign_in_platform_interface:
-    dependency: transitive
-    description:
-      name: google_sign_in_platform_interface
-      sha256: "1f6e5787d7a120cc0359ddf315c92309069171306242e181c09472d1b00a2971"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.4.5"
-  google_sign_in_web:
-    dependency: transitive
-    description:
-      name: google_sign_in_web
-      sha256: ada595df6c30cead48e66b1f3a050edf0c5cf2ba60c185d69690e08adcc6281b
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.12.4+3"
   html:
     dependency: transitive
     description:
@@ -757,22 +536,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.1+1"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.19.0"
-  js:
-    dependency: transitive
-    description:
-      name: js
-      sha256: f2c445dce49627136094980615a031419f7f3eb393237e4ecd97ac15dea343f3
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.6.7"
   json_annotation:
     dependency: transitive
     description:
@@ -1017,10 +780,10 @@ packages:
     dependency: transitive
     description:
       name: shared_preferences_android
-      sha256: "02a7d8a9ef346c9af715811b01fbd8e27845ad2c41148eefd31321471b41863d"
+      sha256: bf808be89fe9dc467475e982c1db6c2faf3d2acf54d526cd5ec37d86c99dbd84
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.0"
+    version: "2.4.1"
   shared_preferences_foundation:
     dependency: transitive
     description:
