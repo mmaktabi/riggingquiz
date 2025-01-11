@@ -41,6 +41,7 @@ dependencies:
   go_router: ^14.6.3
   flutter_quiz_matcher: ^0.0.4 # Quiz Matcher Question
   flutter_animated_button: ^2.0.4
+  flutter_launcher_icons: ^0.14.2 # icon von apps
 
 
   image_picker: ^1.1.2 # um images hochzuladen
@@ -95,6 +96,10 @@ dev_dependencies:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_logo.png"
 
 # The following section is specific to Flutter packages.
 flutter:
