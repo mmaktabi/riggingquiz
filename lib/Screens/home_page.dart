@@ -8,6 +8,7 @@ import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
 import 'package:rigging_quiz/Screens/friends/game_service.dart';
 import 'package:rigging_quiz/Screens/friends/find_friends.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
+import 'package:rigging_quiz/main_web.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/images.dart';
 import 'package:rigging_quiz/utils/layout.dart';
@@ -17,143 +18,8 @@ import 'package:rigging_quiz/widgets/carousel_quizes.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:rigging_quiz/widgets/score/list_history.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    listenForDuelRequests();
-  }
-
-  StreamSubscription<DatabaseEvent>? _duelRequestSubscription;
-  final GameService _gameService = GameService();
-
-  void listenForDuelRequests() {
-    final userService = Provider.of<UserService>(context, listen: false);
-    final userUid = userService.uid;
-
-    if (userUid == null) return;
-
-    // Listen to 'game_sessions' where 'friendUid' is equal to current user and status is 'pending'
-    _duelRequestSubscription = FirebaseDatabase.instance
-        .ref()
-        .child('game_sessions')
-        .orderByChild('friendUid')
-        .equalTo(userUid)
-        .onValue
-        .listen((event) {
-      if (event.snapshot.exists) {
-        final children = event.snapshot.children;
-        for (final child in children) {
-          final data = Map<String, dynamic>.from(child.value as Map);
-
-          if (data['status'] == 'pending') {
-            _showDuelRequestDialog(
-              fromUid: data['requesterUid'],
-              categoryId: data['categoryId'],
-              gameId: data['gameId'],
-            );
-          }
-        }
-      }
-    }, onError: (error) {
-      debugPrint("Fehler beim Abonnieren des Streams: $error");
-    });
-  }
-
-  void _showDuelRequestDialog({
-    required String fromUid,
-    required String categoryId,
-    required String gameId,
-  }) async {
-    if (!mounted) return; // Überprüfen Sie, ob das Widget noch montiert ist
-
-    // Load user data of the requester
-    final userRef = FirebaseDatabase.instance.ref().child('users/$fromUid');
-    final userSnapshot = await userRef.get();
-
-    if (!userSnapshot.exists) {
-      print("User data for $fromUid not found.");
-      return;
-    }
-
-    final userData = Map<String, dynamic>.from(userSnapshot.value as Map);
-
-    String requesterName = userData['name'] ?? 'Unknown User';
-    String requesterAvatar = userData['avatarUrl'] ?? '';
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const QText(text: 'Spiel Anfrage'),
-          content: SizedBox(
-            width: 420,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CircleAvatar(
-                  child: requesterAvatar.isEmpty
-                      ? const Icon(Icons.person)
-                      : qAvatar(avatar: requesterAvatar),
-                ),
-                const SizedBox(height: 10),
-                QText(
-                    text:
-                        '$requesterName glaubt, er hätte eine Chance gegen dich. Beweise das Gegenteil und zeig, was in dir steckt! Gewinne das Duell und sichere dir 5 zusätzliche Schäkel!'),
-              ],
-            ),
-          ),
-          actions: [
-            QButton(
-              onPressed: () async {
-                final userService =
-                    Provider.of<UserService>(context, listen: false);
-                await _gameService.declineDuelRequest(gameId, userService.uid!);
-                Navigator.of(context).pop();
-              },
-              buttonText: "Ablehnen",
-            ),
-            QButton(
-              buttonText: "Annehmen",
-              onPressed: () async {
-                final userService =
-                    Provider.of<UserService>(context, listen: false);
-                await _gameService.acceptDuelRequest(gameId, userService.uid!);
-                // Start game session
-                await _gameService.startGameSession(gameId);
-                Navigator.of(context).pop();
-
-                // Navigate to DuelGameScreen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DuelGameScreen(
-                      gameId: gameId,
-                      playerUid: userService.uid ?? "",
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _duelRequestSubscription?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

@@ -21,7 +21,6 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
-        print("Admin-Benutzer erfolgreich erstellt: ${response.body}");
       } else {
         print("Fehler: ${response.body}");
         throw Exception("Fehler beim Erstellen des Admin-Benutzers");

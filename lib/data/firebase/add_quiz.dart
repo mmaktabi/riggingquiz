@@ -171,7 +171,6 @@ class QuizService {
 
   // Hilfsmethoden zur Konvertierung der Objekte in Maps
   Map<String, dynamic> _categoryToMap(QuizCategory category) {
-    print(category.categoryColor);
     return {
       'name': category.name,
       'description': category.description,

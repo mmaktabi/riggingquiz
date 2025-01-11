@@ -1,5 +1,3 @@
-// In ScoreHeader.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rigging_quiz/Screens/friends/friendservice.dart';
@@ -17,12 +15,12 @@ import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'dart:async';
 
 class ScoreHeader extends StatefulWidget {
-  final List<UserBadge> badges; // Ändere hier den Typ
+  final List<UserBadge> badges;
 
   const ScoreHeader({
-    super.key,
+    Key? key,
     required this.badges,
-  });
+  }) : super(key: key);
 
   @override
   _ScoreHeaderState createState() => _ScoreHeaderState();
@@ -33,11 +31,9 @@ class _ScoreHeaderState extends State<ScoreHeader> {
   bool isLoading = true;
   final ScoreService scoreService = ScoreService();
   final GreetingService greetingService = GreetingService();
-  final FriendService friendService =
-      FriendService(); // Instanz von FriendService
+  final FriendService friendService = FriendService();
   late StreamSubscription<int> _scoreSubscription;
-  late StreamSubscription<int>
-      _friendRequestsSubscription; // Subscription für Freundschaftsanfragen
+  late StreamSubscription<int> _friendRequestsSubscription;
   int _friendRequestsCount = 0;
 
   @override
@@ -47,19 +43,17 @@ class _ScoreHeaderState extends State<ScoreHeader> {
     final userService = Provider.of<UserService>(context, listen: false);
 
     if (userService.uid != null) {
-      // Abonniere den Score-Stream
       _scoreSubscription =
           scoreService.getScoreStream(userService.uid!).listen((newScore) {
-        if (mounted) {
-          setState(() {
-            _score = newScore;
+            if (mounted) {
+              setState(() {
+                _score = newScore;
+              });
+            }
+          }, onError: (error) {
+            print('Fehler beim Abonnieren des Score-Streams: $error');
           });
-        }
-      }, onError: (error) {
-        print('Fehler beim Abonnieren des Score-Streams: $error');
-      });
 
-      // Abonniere den FriendRequestsCount-Stream
       _friendRequestsSubscription = friendService
           .getFriendRequestsCountStream(userService.uid!)
           .listen((count) {
@@ -73,7 +67,6 @@ class _ScoreHeaderState extends State<ScoreHeader> {
       });
     }
 
-    // Simuliere eine kurze Ladezeit und setze isLoading danach auf false
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         setState(() {
@@ -85,7 +78,6 @@ class _ScoreHeaderState extends State<ScoreHeader> {
 
   @override
   void dispose() {
-    // Beende die Subscriptions, wenn das Widget aus dem Baum entfernt wird
     _scoreSubscription.cancel();
     _friendRequestsSubscription.cancel();
     super.dispose();
@@ -94,15 +86,46 @@ class _ScoreHeaderState extends State<ScoreHeader> {
   @override
   Widget build(BuildContext context) {
     final userService = Provider.of<UserService>(context);
+    final double width = MediaQuery.of(context).size.width;
+// Berechne proportionale Größen basierend auf der Bildschirmbreite
+    double iconSize;
+    double friendsIconSize;
+    double greetingFontSize;
+    double nameFontSize;
+    double scoreFontSize;
+    double schaekelSize;
+    double trophySize;
+    double imgSize;
+    if (width > 600) {
+      // Für größere Bildschirme (z.B. Tablets, Laptops)
+      iconSize = 16;
+      friendsIconSize = 30;
+      greetingFontSize = 11;
+      nameFontSize = 22;
+      scoreFontSize = 22;
+      schaekelSize = 45;
+      trophySize =  55;
+      imgSize =  80;
+    } else {
+      // Für kleinere Bildschirme (Handys)
+      iconSize = width * 0.05;
+      friendsIconSize = width * 0.05;
+      greetingFontSize = width * 0.020;
+      nameFontSize = width * 0.042;
+      scoreFontSize = width * 0.035;
+      schaekelSize = width * 0.09;
+      trophySize = width * 0.12;
+      imgSize = width * 0.15;
+    }
 
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
+
+
+
+    return  Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 5),
+            child: Row(
               children: [
                 InkWell(
                   onTap: () => _showBadgesModal(context),
@@ -117,7 +140,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                             children: [
                               Icon(
                                 greetingService.icon,
-                                size: 24.0,
+                                size: iconSize,
                                 color: QColors.accentColor,
                               ),
                               Container(
@@ -125,7 +148,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                                 child: QText(
                                   text: greetingService.greeting,
                                   weight: FontWeight.w700,
-                                  fontSize: 14,
+                                  fontSize: greetingFontSize,
                                   color: QColors.accentColor,
                                 ),
                               ),
@@ -136,7 +159,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                             child: QText(
                               text: userService.name ?? "",
                               weight: FontWeight.w500,
-                              fontSize: 24,
+                              fontSize: nameFontSize,
                               color: Colors.white,
                             ),
                           ),
@@ -144,84 +167,81 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                       ),
                       Image.asset(
                         QImages.schaekel,
-                        width: 32,
-                        height: 32,
+                        width: schaekelSize,
+                        height: schaekelSize,
                       ),
                       const SizedBox(width: 12),
-                      // Zeige den Score an (ohne Animation)
                       isLoading
                           ? QWidgets().progressIndicator
                           : Text(
-                              '$_score',
-                              style: primaryTextStyle(
-                                color: QColors.white,
-                                fontSize: 22,
-                              ),
-                            ),
+                        '$_score',
+                        style: TextStyle(
+                          color: QColors.white,
+                          fontSize: scoreFontSize,
+                        ),
+                      ),
                       const SizedBox(width: 24),
                       Image.asset(
                         Images.illustrationTrophy,
-                        width: 50,
-                        height: 50,
+                        width: trophySize,
+                        height: trophySize,
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
-            Container(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: MouseRegion(
-                      cursor: SystemMouseCursors.click,
-                      child: GestureDetector(
-                        onTap: () => _navigateToMyFriends(),
-                        child: Stack(
-                          children: [
-                            const Icon(Icons.group, color: QColors.white, size: 25),
-                            Positioned(
-                              right: 0,
-                              child: customBadge(_friendRequestsCount),
-                            ),
-                          ],
+                Spacer(),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () => _navigateToMyFriends(),
+                          child: Stack(
+                            children: [
+                              Icon(Icons.group, color: QColors.white, size: friendsIconSize),
+                              Positioned(
+                                right: 0,
+                                child: customBadge(_friendRequestsCount),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                    MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => const SettingScreen()));
-                      },
-                      child: userService.avatarUrl != null
-                          ? SizedBox(
-                              width: 60,
-                              child:
-                                  qAvatar(avatar: userService.avatarUrl ?? ""))
-                          : const CircleAvatar(
-                              backgroundColor: QColors.accentColor,
-                            ),
+                            MaterialPageRoute(builder: (context) => const SettingScreen()),
+                          );
+                        },
+                        child: userService.avatarUrl != null
+                            ? SizedBox(
+                          width: imgSize ,
+                          child: qAvatar(avatar: userService.avatarUrl ?? ""),
+                        )
+                            : CircleAvatar(
+                          backgroundColor: QColors.accentColor,
+                          radius: 30,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
+          ),
+        );
+      }
+
+
 
   void _navigateToMyFriends() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const MyFriends()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const MyFriends()));
   }
 
   void _showBadgesModal(BuildContext context) {
@@ -230,8 +250,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: QColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
             child: Container(
@@ -272,12 +291,14 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                     ),
                   const SizedBox(height: 100),
                   Align(
-                      alignment: Alignment.centerRight,
-                      child: QButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          buttonText: 'Schließen')),
+                    alignment: Alignment.centerRight,
+                    child: QButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      buttonText: 'Schließen',
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -289,7 +310,6 @@ class _ScoreHeaderState extends State<ScoreHeader> {
 }
 
 class UserBadge {
-  // Umbenannte Klasse
   final String name;
   final String imagePath;
 
@@ -299,23 +319,23 @@ class UserBadge {
 Widget customBadge(int count) {
   return count > 0
       ? Container(
-          padding: const EdgeInsets.all(4),
-          decoration: const BoxDecoration(
-            color: Colors.red,
-            shape: BoxShape.circle,
-          ),
-          constraints: const BoxConstraints(
-            minWidth: 16,
-            minHeight: 16,
-          ),
-          child: Text(
-            '$count',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        )
+    padding: const EdgeInsets.all(4),
+    decoration: const BoxDecoration(
+      color: Colors.red,
+      shape: BoxShape.circle,
+    ),
+    constraints: const BoxConstraints(
+      minWidth: 16,
+      minHeight: 16,
+    ),
+    child: Text(
+      '$count',
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 10,
+      ),
+      textAlign: TextAlign.center,
+    ),
+  )
       : const SizedBox.shrink();
 }

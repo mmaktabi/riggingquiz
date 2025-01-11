@@ -41,7 +41,6 @@ class _MyFriendsState extends State<MyFriends> {
         _friendRequests =
             List<Map<String, dynamic>>.from(data['friendRequests'] ?? []);
         _friends = List<Map<String, dynamic>>.from(data['friends'] ?? []);
-        print(_friendRequests);
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

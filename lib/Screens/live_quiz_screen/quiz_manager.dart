@@ -66,7 +66,6 @@ class QuizProvider with ChangeNotifier {
   void startTimer(Function onTimeExpired) {
     _timer?.cancel();
     _timeRemaining = _maxTime;
-    print('Starting timer with $_timeRemaining seconds');
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_timeRemaining <= 0) {
         timer.cancel();

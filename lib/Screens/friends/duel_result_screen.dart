@@ -124,7 +124,6 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
         .onValue
         .listen((event) {
       final status = event.snapshot.value as String?;
-      print('Spielstatus geändert: $status');
 
       if (status == 'finished') {
         loadResults();     setState(() {

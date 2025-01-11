@@ -32,9 +32,7 @@ class FriendService {
         'status': 'pending',
         'timestamp': DateTime.now().toIso8601String(),
       };
-      print('Daten werden gesendet: $data');
       await ref.set(data);
-      print('Spielanfrage erfolgreich gesendet.');
     } catch (e) {
       print('Fehler beim Senden der Spielanfrage: $e');
       throw Exception('Fehler beim Senden der Spielanfrage: $e');

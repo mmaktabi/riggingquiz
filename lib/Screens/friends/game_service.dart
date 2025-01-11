@@ -65,7 +65,6 @@ class GameService {
       };
 
       await newGameRef.set(gameData);
-      print('Spielsession erfolgreich erstellt: $gameId');
       return gameId;
     } catch (e) {
       print('Fehler beim Senden der Duellanfrage: $e');
@@ -137,7 +136,6 @@ class GameService {
 
       final questionIds = questionsMap.keys.toList()..shuffle();
       final selectedQuestions = questionIds.take(7).toList();
-      print('Ausgewählte Fragen: $selectedQuestions');
 
       await _gameSessionsRef.child(gameId).update({
         'questionIds': selectedQuestions,
@@ -173,7 +171,6 @@ class GameService {
       }
 
       final gameData = Map<String, dynamic>.from(gameSnapshot.value as Map);
-      print('Aktuelle Spielsession-Daten: $gameData');
 
       final playersData = Map<String, dynamic>.from(gameData['players']);
       final playerData = playersData[playerUid];
@@ -181,14 +178,12 @@ class GameService {
 
       final questionIds = List<String>.from(gameData['questionIds'] ?? []);
       if (currentQuestionIndex >= questionIds.length) {
-        print('Keine weiteren Fragen.');
         return null;
       }
 
 
       final currentQuestionId = questionIds[currentQuestionIndex];
       final categoryId = gameData['categoryId'] ?? '';
-      print('Kategorie-ID: $categoryId, Frage-ID: $currentQuestionId');
 
       final questionSnapshot = await _categoriesRef
           .child('$categoryId/questions/$currentQuestionId')
@@ -200,7 +195,6 @@ class GameService {
 
       final questionData =
           Map<String, dynamic>.from(questionSnapshot.value as Map);
-      print('Geladene Frage: $currentQuestionIndex');
 
       return {
         'question': _mapToQuiz(questionData),
@@ -218,7 +212,6 @@ class GameService {
       final playerRef = _gameSessionsRef.child('$gameId/players/$playerUid');
 
       // Debugging
-      print('Vor Update: ${await playerRef.get()}');
 
       // Aktualisierung
       await playerRef.update({
@@ -238,12 +231,9 @@ class GameService {
           Map<String, dynamic>.from(playersData[playerUid] ?? {});
       final questionIds = List<String>.from(gameData['questionIds'] ?? []);
       final currentQuestionIndex = playerData['currentQuestionIndex'];
-      print('Anzahl der Fragen: ${questionIds.length}');
-      print('Frage IDs: $questionIds');
 
       // Setze Spielerstatus auf "finished", wenn alle Fragen beantwortet sind
       if (currentQuestionIndex >= questionIds.length) {
-        print('Spieler $playerUid hat alle Fragen beantwortet.');
         await playerRef.update({'finished': true});
       }
 
@@ -256,11 +246,9 @@ class GameService {
           .every((player) => player['finished'] == true);
 
       if (allFinished) {
-        print('Alle Spieler sind fertig. Setze Spielstatus auf "finished".');
         await _gameSessionsRef.child(gameId).update({'status': 'finished'});
       }
 
-      print('Nach Update: ${await playerRef.get()}');
     } catch (e) {
       print('Fehler beim Verarbeiten der Antwort: $e');
       throw Exception('Fehler beim Verarbeiten der Antwort.');

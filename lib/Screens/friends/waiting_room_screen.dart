@@ -105,7 +105,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
         final status = gameData['status'] as String?;
 
         if (status == 'ongoing') {
-          print('Spiel gestartet!');
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -116,7 +115,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
             ),
           );
         } else if (status == 'declined') {
-          print('Spiel wurde abgelehnt.');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Dein Gegner hat das Spiel abgelehnt.')),
           );

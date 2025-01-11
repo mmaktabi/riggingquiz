@@ -17,7 +17,6 @@ class ScoreService extends ChangeNotifier {
           } else if (value is String) {
             return int.tryParse(value) ?? 0;
           } else {
-            print('Unbekannter Typ: $value');
             return 0;
           }
         } catch (e) {

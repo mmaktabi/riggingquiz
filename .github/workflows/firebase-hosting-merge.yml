@@ -30,14 +30,14 @@ jobs:
       # 5. Flutter Web-Build erstellen
       - name: Build Flutter Web
         run: flutter build web --release --target lib/main.dart
-
+#
       # 6. Firebase Hosting Deployment
-      - name: Deploy to Firebase Hosting
-        uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIGGING_C0661 }}"
-          channelId: live
-          projectId: rigging-c0661
-        env:
-          FIREBASE_CLI_EXPERIMENTS: webframeworks
+        #- name: Deploy to Firebase Hosting
+        #   uses: FirebaseExtended/action-hosting-deploy@v0
+          #  with:
+          #    repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          #   firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_RIGGING_C0661 }}"
+          #   channelId: live
+        #   projectId: rigging-c0661
+          # env:
+      #   FIREBASE_CLI_EXPERIMENTS: webframeworks

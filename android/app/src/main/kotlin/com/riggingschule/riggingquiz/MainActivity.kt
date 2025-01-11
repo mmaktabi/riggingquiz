@@ -1,4 +1,4 @@
-package com.example.rigging_quiz
+package com.riggingschule.riggingquiz
 
 import io.flutter.embedding.android.FlutterActivity
 

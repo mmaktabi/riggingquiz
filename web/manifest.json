@@ -1,11 +1,11 @@
 {
-    "name": "rigging_quiz",
-    "short_name": "rigging_quiz",
+    "name": "RiggingQuiz",
+    "short_name": "RiggingQuiz",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "RiggingQuiz ist ein interaktives Quizspiel für den Bereich Veranstaltungstechnik.",
+    "description": "Ein interaktives Quiz für alle, die Spaß an Wissen und Herausforderungen haben! Teste dein Können in Rigging, Traversen und mehr. Mach mit und werde der Rigging-Meister!",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
