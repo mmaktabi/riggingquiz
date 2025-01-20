@@ -26,7 +26,7 @@ class QColors {
   static const Color highlightColor = Color.fromRGBO(242, 220, 93,
       1); // Helles Gelb-Gold, für Highlights, schafft visuelle Aufmerksamkeit
   static const Color accentColorOpacity = Color.fromRGBO(139, 229, 180, 0.9);
-  static const Color dullLavender = Color.fromRGBO(144, 135, 229, 1);
+  static const Color dullLavender = Color.fromRGBO(91, 134, 221, 1.0);
 
   static const Color white = Color.fromRGBO(255, 255, 255, 1);
   static const Color black = Color.fromRGBO(0, 0, 0, 1);

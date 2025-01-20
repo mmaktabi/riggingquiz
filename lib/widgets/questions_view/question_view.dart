@@ -3,7 +3,9 @@ import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+import 'package:rigging_quiz/widgets/questions_view/Answer_tile.dart';
 import 'package:rigging_quiz/widgets/questions_view/matchingquestionwidget.dart';
+import 'package:rigging_quiz/widgets/questions_view/questionNumber.dart';
 import 'package:rigging_quiz/widgets/questions_view/timer_indicator.dart';
 
 class QuestionView extends StatefulWidget {
@@ -44,43 +46,67 @@ class QuestionView extends StatefulWidget {
 
 class _QuestionViewState extends State<QuestionView> {
 
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 50),
-          _buildQuestionHeader(),
-          const SizedBox(height: 16),
-          _buildTimer(),
-          const SizedBox(height: 16),
-          _buildAnswerOptions(),
-          if (widget.isPressed) _buildFeedbackAndNextButton(),
-          if (widget.showSubmitButton && !widget.isPressed)
-            _buildSubmitButton(),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: QuestionNumber(
+                  number: widget.index,
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.exit_to_app_rounded,
+                      size: 30, color: QColors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        _buildQuestionHeader(),
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              _buildTimer(),
+              const SizedBox(height: 16),
+              _buildAnswerOptions(),
+              if (widget.isPressed) _buildFeedbackAndNextButton(),
+              if (widget.showSubmitButton && !widget.isPressed)
+                _buildSubmitButton(),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
   Widget _buildQuestionHeader() {
     return Column(
       children: [
-        QText(
-          text: 'Frage: ${widget.index}',
-          color: QColors.accentColor,
-          weight: FontWeight.w500,
-          fontSize: 14,
-          textAlign: TextAlign.center,
-        ),
-        QText(
-          text: widget.question.question,
-          color: QColors.white,
-          weight: FontWeight.w500,
-          fontSize: 20,
-          textAlign: TextAlign.center,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: QText(
+            text: widget.question.question,
+            color: QColors.white,
+            weight: FontWeight.w500,
+            fontSize: 20,
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );
@@ -92,7 +118,6 @@ class _QuestionViewState extends State<QuestionView> {
       initialTime: widget.timeRemaining,
     );
   }
-
 
   Widget _buildAnswerOptions() {
     switch (widget.question.questionType) {
@@ -111,54 +136,24 @@ class _QuestionViewState extends State<QuestionView> {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+
       itemCount: widget.question.multiSelect?.length ?? 0,
       itemBuilder: (context, index) {
         final answer = widget.question.multiSelect?[index]['label'] ?? '';
         final isCorrect = widget.question.multiSelect?[index]['value'] as bool;
         final isSelected = widget.selectedAnswers.contains(index);
 
-        return _buildAnswerTile(answer, isCorrect, isSelected, index);
+        return AnswerTile(
+            isPressed: widget.isPressed,
+            onAnswerSelected: (p0) => widget.onAnswerSelected(index),
+            answer: answer,
+            isCorrect: isCorrect,
+            isSelected: isSelected,
+            index: index);
       },
     );
   }
 
-  Widget _buildAnswerTile(
-      String answer, bool isCorrect, bool isSelected, int index) {
-    final tileColor = widget.isPressed
-        ? (isCorrect
-            ? QColors.accentColor
-            : isSelected
-                ? QColors.errorColor
-                : QColors.white)
-        : isSelected
-            ? QColors.accentColor
-            : QColors.white;
-
-    final textColor = widget.isPressed && isCorrect || isSelected
-        ? QColors.white
-        : QColors.primaryColor;
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child:  GestureDetector(
-        onTap: () => widget.onAnswerSelected(index),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: tileColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: QText(
-              text: answer,
-              color: textColor,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget _buildFeedbackAndNextButton() {
     return Column(

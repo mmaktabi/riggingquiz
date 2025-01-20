@@ -16,6 +16,7 @@ import 'package:rigging_quiz/widgets/avatar.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/carousel_quizes.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+import 'package:rigging_quiz/widgets/questions_view/questionNumber.dart';
 import 'package:rigging_quiz/widgets/score/list_history.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -60,6 +61,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+
 
           const Padding(
             padding: EdgeInsets.only(top: 12, bottom: 12),
@@ -177,3 +179,4 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+

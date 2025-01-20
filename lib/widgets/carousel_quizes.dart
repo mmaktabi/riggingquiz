@@ -82,9 +82,30 @@ class _CarouselQuizesState extends State<CarouselQuizes> {
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 10),
-                                decoration: BoxDecoration(
-                                  color: category.categoryColor,
+                          
+                                decoration:  BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
+
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Color.fromRGBO(0, 49, 94, 0.5),
+                                      spreadRadius: 2,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 1),
+                                    )
+                                  ],
+
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    stops: [0.0, 1.0, 1.0],
+                                    colors: [
+
+                                      QColors.dullLavender,
+                                      QColors.backgroundColor,
+                                      QColors.backgroundColor,
+                                    ],
+                                  ),
                                 ),
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
