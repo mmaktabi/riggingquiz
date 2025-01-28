@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
+import 'package:rigging_quiz/Screens/setting_screen/datenschutz.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/utils/images.dart';
+import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:rigging_quiz/widgets/textfield.dart';
 
 class SignInPage extends StatefulWidget {
@@ -19,16 +21,16 @@ class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isSignUp = false; // Flag, um zwischen Sign-In und Sign-Up zu wechseln
   bool _isLoading = false;
+  bool _acceptedPrivacyPolicy = false;
+  double _selectedAge = 18;
 
   // Controller für Textfelder
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-
     return QLayout(
       child: Column(
         children: [
@@ -63,13 +65,13 @@ class _SignInPageState extends State<SignInPage> {
                   labelText: 'Passwort',
                   controller: _passwordController,
                   isPassword: true,
+
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Bitte geben Sie ein Passwort ein.';
                     }
-
                     String pattern =
-                        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~])[A-Za-z\d!@#\$&*~]{8,}$';
+                        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\\$&*~])[A-Za-z\d!@#\\$&*~]{8,}\$';
                     RegExp regex = RegExp(pattern);
 
                     if (!regex.hasMatch(value)) {
@@ -79,37 +81,87 @@ class _SignInPageState extends State<SignInPage> {
                   },
                 ),
                 if (_isSignUp)
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
-                        child: QTextField(
-                          labelText: 'Name',
-                          controller: _nameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Bitte geben Sie einen Namen ein.';
-                            }
-                            return null;
-                          },
+                      QTextField(
+                        labelText: 'Name',
+                        controller: _nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Bitte geben Sie einen Namen ein.';
+                          }
+                          return null;
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 20),
+                            QText(
+                              text: 'Alter: ${_selectedAge.round()}',
+
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: _selectedAge,
+                                min: 10,
+                                max: 100,
+                                activeColor: QColors.primaryColor,
+                                thumbColor: QColors.primaryColor,
+                                divisions: 90,
+                                label: _selectedAge.round().toString(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedAge = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              activeColor: QColors.primaryColor,
+                              value: _acceptedPrivacyPolicy,
+                              onChanged: (value) {
+                                setState(() {
+                                  _acceptedPrivacyPolicy = value ?? false;
+                                });
+                              },
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const PrivacyPolicyPage(),
+                                  ),
+                                );
+                              },
+                              child:  MouseRegion(
+                                cursor: SystemMouseCursors.click,
+                                child: QText(
+                                  text: 'Ich akzeptiere die Datenschutzerklärung',
+
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                if (_isSignUp)
-                  QTextField(
-                    keyboardType: TextInputType.number,
-                    controller: _ageController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Bitte geben Sie Ihr Alter ein.';
-                      }
-                      return null;
-                    },
-                    labelText: 'Alter',
-                  ),
+
                 const SizedBox(height: 20),
+
                 QButton(
-                  onPressed: _isLoading ? null : _submit,
+                  onPressed: _isLoading || !_acceptedPrivacyPolicy ? null : _submit,
                   buttonText: _isSignUp ? 'Registrieren' : 'Anmelden',
                 ),
                 if (_isLoading) QWidgets().progressIndicator,
@@ -153,7 +205,7 @@ class _SignInPageState extends State<SignInPage> {
           _emailController.text,
           _passwordController.text,
           _nameController.text,
-          _ageController.text,
+          _selectedAge.round().toString(),
         );
       } else {
         await UserService().signInUser(

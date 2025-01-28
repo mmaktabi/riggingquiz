@@ -3,8 +3,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quiz_matcher/flutter_quiz_matcher.dart';
 import 'package:rigging_quiz/Screens/friends/duel_result_screen.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
-import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
+import 'package:rigging_quiz/old/game_service.dart';
+import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager_local.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
@@ -25,8 +26,6 @@ class DuelGameScreen extends StatefulWidget {
 }
 
 class _DuelGameScreenState extends State<DuelGameScreen> {
-  final GameService _gameService = GameService();
-  final QuizProvider _quizProvider = QuizProvider();
   Quiz? currentQuestion;
   bool isLoading = true;
   bool isPressed = false;
@@ -58,7 +57,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
 
   /// Hört Änderungen des `currentQuestionIndex` in Echtzeit
   void listenToQuestionIndex() {
-    final playerRef = _gameService.getGameSessionsRef().child(
+    final playerRef = GameManager.instance.getGameSessionsRef().child(
         '${widget.gameId}/players/${widget.playerUid}/currentQuestionIndex');
 
     _questionIndexListener = playerRef.onValue.listen((event) {
@@ -83,7 +82,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
       });
 
       // Lade die aktuelle Frage und den Index
-      final result = await _gameService.getCurrentQuestion(
+      final result = await GameManager.instance.getCurrentQuestion(
         widget.gameId,
         widget.playerUid,
       );
@@ -143,7 +142,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
       showSubmitButton = false;
     });
     _timer?.cancel();
-    _gameService.submitAnswer(widget.gameId, widget.playerUid, false);
+    GameManager.instance.submitAnswer(widget.gameId, widget.playerUid, false);
     Future.delayed(const Duration(seconds: 1), loadCurrentQuestion);
   }
 
@@ -189,7 +188,7 @@ class _DuelGameScreenState extends State<DuelGameScreen> {
     _timer?.cancel();
 
     // Antwort übermitteln
-    _gameService.submitAnswer(widget.gameId, widget.playerUid, isCorrect);
+    GameManager.instance.submitAnswer(widget.gameId, widget.playerUid, isCorrect);
 
     // Nächste Frage nach einer kurzen Verzögerung laden
     Future.delayed(const Duration(seconds: 1), loadCurrentQuestion);

@@ -6,7 +6,7 @@ import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
 
-class QuizProvider with ChangeNotifier {
+class QuizProviderLocal with ChangeNotifier {
   late QuizCategory _quizCategory;
   int _currentStepIndex = 0;
   int _totalPoints = 0;

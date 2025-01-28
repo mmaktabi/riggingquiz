@@ -1,8 +1,6 @@
 import 'dart:async';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-// Für Provider
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
@@ -25,13 +23,11 @@ class DuelResultScreen extends StatefulWidget {
 }
 
 class _DuelResultScreenState extends State<DuelResultScreen> {
-  final GameService _gameService = GameService();
   Map<String, dynamic> results = {};
   bool isLoading = true;
   String message = '';
   String gameStatus = 'ongoing'; // Standardstatus
-  StreamSubscription<DatabaseEvent>? _gameStatusSubscription;
-  final bool _scoreUpdated = false; // Um Mehrfachaktualisierungen zu vermeiden
+  bool _scoreUpdated = false; // Um Mehrfachaktualisierungen zu vermeiden
   int correctAnswers = 0;
   int wrongAnswers = 0;
   int totalQuestions = 0;
@@ -41,11 +37,12 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
   void initState() {
     super.initState();
     loadResults();
+    _listenForGameFinish();
   }
 
   @override
   void dispose() {
-    _gameStatusSubscription?.cancel();
+    GameManager.instance.stopListeningToGameStatus();
     super.dispose();
   }
 
@@ -55,21 +52,20 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
         isLoading = true;
       });
 
-      gameStatus = await _gameService.getGameStatus(widget.gameId);
+      gameStatus = await GameManager.instance.getGameStatus(widget.gameId);
 
       if (gameStatus != 'finished') {
-        _listenForGameFinish();
         return;
       }
 
-      final gameData = await _gameService.getGameResult(widget.gameId);
+      final gameData = await GameManager.instance.getGameResult(widget.gameId);
       results = Map<String, dynamic>.from(gameData);
 
       if (!(results['scoresUpdated'] ?? false)) {
-        await _gameService.updateScoresIfNotUpdated(widget.gameId);
+        await GameManager.instance.updateScoresIfNotUpdated(widget.gameId);
 
         // Erneut die Ergebnisse abrufen
-        results = await _gameService.getGameResult(widget.gameId);
+        results = await GameManager.instance.getGameResult(widget.gameId);
       }
 
       _synchronizeResults();
@@ -83,20 +79,19 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Fehler beim Laden der Ergebnisse: $e')),
       );
-
     }
   }
 
   void _synchronizeResults() {
     final String opponentUid = results.keys.firstWhere(
-      (uid) => uid != widget.playerUid,
+          (uid) => uid != widget.playerUid,
       orElse: () => '',
     );
 
     final Map<String, dynamic> playerData =
-        Map<String, dynamic>.from(results[widget.playerUid] ?? {});
+    Map<String, dynamic>.from(results[widget.playerUid] ?? {});
     final Map<String, dynamic> opponentData =
-        Map<String, dynamic>.from(results[opponentUid] ?? {});
+    Map<String, dynamic>.from(results[opponentUid] ?? {});
 
     correctAnswers = playerData['correctAnswers'] ?? 0;
     wrongAnswers = playerData['wrongAnswers'] ?? 0;
@@ -118,23 +113,21 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
   }
 
   void _listenForGameFinish() {
-    _gameStatusSubscription = _gameService
-        .getGameSessionsRef()
-        .child('${widget.gameId}/status')
-        .onValue
-        .listen((event) {
-      final status = event.snapshot.value as String?;
-
-      if (status == 'finished') {
-        loadResults();     setState(() {
-          // UI aktualisieren
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
+    GameManager.instance.startListeningToGameStatus(
+      gameId: widget.gameId,
+      onGameStatusChanged: (status, _) {
+        if (status == 'finished') {
+          loadResults();
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      },
+    );
   }
 
   @override
@@ -143,54 +136,53 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
       child: isLoading
           ? QWidgets().progressIndicator
           : Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (gameStatus == 'finished') ...[
+            _buildTopDesign(),
+            const SizedBox(height: 20),
+            QText(
+              text: message,
+              weight: FontWeight.w500,
+              fontSize: 20,
+              color: QColors.primaryColor,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            PointsLine(
+              punkte: correctAnswers * 10, // Angenommen 10 Punkte pro korrekte Antwort
+              maximalPunkte: totalQuestions * 10,
+              schaekel: schaekelEarned,
+            ),
+            const SizedBox(height: 20),
+          ] else ...[
+            Column(
               children: [
-                if (gameStatus == 'finished') ...[
-                  _buildTopDesign(),
-                  const SizedBox(height: 20),
-                  QText(
-                    text: message,
-                    weight: FontWeight.w500,
-                    fontSize: 20,
-                    color: QColors.primaryColor,
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 20),
-                  PointsLine(
-                    punkte: correctAnswers *
-                        10, // Angenommen 10 Punkte pro korrekte Antwort
-                    maximalPunkte: totalQuestions * 10,
-                    schaekel: schaekelEarned,
-                  ),
-                  const SizedBox(height: 20),
-                ] else ...[
-                  Column(
-                    children: [
-                      const SizedBox(
-                        height: 100,
-                      ),
-                      const QText(
-                        text: 'Warte, bis dein Gegner fertig ist.',
-                        weight: FontWeight.w500,
-                        fontSize: 20,
-                        color: QColors.primaryColor,
-                      ),
-                      const SizedBox(height: 20),
-                      QWidgets().progressIndicator,
-                    ],
-                  ),
-                ],
-                const SizedBox(height: 40),
-                _buildScoreCard(),
-                const SizedBox(height: 40),
-                QButton(
-                  buttonText: 'Zurück zum Hauptmenü',
-                  onPressed: () {
-                    Navigator.popUntil(context, ModalRoute.withName('/'));
-                  },
+                const SizedBox(
+                  height: 100,
                 ),
+                const QText(
+                  text: 'Warte, bis dein Gegner fertig ist.',
+                  weight: FontWeight.w500,
+                  fontSize: 20,
+                  color: QColors.primaryColor,
+                ),
+                const SizedBox(height: 20),
+                QWidgets().progressIndicator,
               ],
             ),
+          ],
+          const SizedBox(height: 40),
+          _buildScoreCard(),
+          const SizedBox(height: 40),
+          QButton(
+            buttonText: 'Zurück zum Hauptmenü',
+            onPressed: () {
+              Navigator.popUntil(context, ModalRoute.withName('/'));
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -243,8 +235,7 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
     if (results.isEmpty || gameStatus != 'finished') {
       return const Center(
         child: QText(
-          text:
-              "Die Ergebnisse werden angezeigt, sobald beide Spieler fertig sind.",
+          text: "Die Ergebnisse werden angezeigt, sobald beide Spieler fertig sind.",
           fontSize: 16,
           color: QColors.primaryColor,
         ),
@@ -252,7 +243,7 @@ class _DuelResultScreenState extends State<DuelResultScreen> {
     }
 
     String opponentUid = results.keys.firstWhere(
-      (uid) => uid != widget.playerUid,
+          (uid) => uid != widget.playerUid,
       orElse: () => '',
     );
 

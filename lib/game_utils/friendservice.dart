@@ -5,11 +5,11 @@ import 'package:firebase_database/firebase_database.dart';
 
 class FriendService {
   final DatabaseReference _usersRef =
-      FirebaseDatabase.instance.ref().child('users');
+  FirebaseDatabase.instance.ref().child('users');
 
   // Auf die Antwort warten
   final DatabaseReference _duelRequestsRef =
-      FirebaseDatabase.instance.ref().child('game_sessions');
+  FirebaseDatabase.instance.ref().child('game_sessions');
 
   // Prüfe, ob ein Spieler gerade aktiv ist
   Future<bool> isPlayerActive(String userId) async {
@@ -25,7 +25,7 @@ class FriendService {
   }) async {
     try {
       final ref =
-          FirebaseDatabase.instance.ref().child('game_sessions/$friendUid');
+      FirebaseDatabase.instance.ref().child('game_sessions/$friendUid');
       final data = {
         'from': currentUserUid,
         'categoryId': categoryId,
@@ -44,7 +44,7 @@ class FriendService {
     return _usersRef.child('$userUid/friends').onValue.map((event) {
       if (event.snapshot.exists) {
         final friendsMap =
-            Map<String, dynamic>.from(event.snapshot.value as Map);
+        Map<String, dynamic>.from(event.snapshot.value as Map);
         // Zähle die Anzahl der Einträge mit status 'request_received'
         int count = friendsMap.values
             .where((value) => value['status'] == 'request_received')
@@ -60,7 +60,7 @@ class FriendService {
 
   Future<bool> awaitDuelResponse(String friendUid) async {
     final responseRef =
-        FirebaseDatabase.instance.ref().child('game_sessions/$friendUid');
+    FirebaseDatabase.instance.ref().child('game_sessions/$friendUid');
     final completer = Completer<bool>();
 
     responseRef.onValue.listen((event) {
@@ -91,7 +91,7 @@ class FriendService {
 
     final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
     String lowercasedSearchText =
-        searchText.toLowerCase(); // Suchtext in Kleinbuchstaben
+    searchText.toLowerCase(); // Suchtext in Kleinbuchstaben
 
     try {
       final snapshot = await _usersRef
@@ -103,7 +103,7 @@ class FriendService {
 
       if (snapshot.exists) {
         final Map<dynamic, dynamic> usersMap =
-            snapshot.value as Map<dynamic, dynamic>;
+        snapshot.value as Map<dynamic, dynamic>;
         List<Map<String, dynamic>> results = [];
 
         usersMap.forEach((key, value) {
@@ -206,7 +206,7 @@ class FriendService {
     final String currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     final snapshot =
-        await _usersRef.child(currentUserId).child('friends').get();
+    await _usersRef.child(currentUserId).child('friends').get();
     List<Map<String, dynamic>> friendRequests = [];
     List<Map<String, dynamic>> sentRequests = [];
     List<Map<String, dynamic>> friends = [];

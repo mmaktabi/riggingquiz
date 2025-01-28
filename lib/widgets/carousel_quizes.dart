@@ -76,22 +76,26 @@ class _CarouselQuizesState extends State<CarouselQuizes> {
                           return MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: AnimatedScale(
-                              scale: isHovered ? 1.03 : 1.0,
+
+                              scale: isHovered ? 0.98 : 0.99,
                               duration: const Duration(milliseconds: 300),
                               curve: Curves.easeOut,
                               child: Container(
                                 margin:
                                     const EdgeInsets.symmetric(horizontal: 10),
-                          
+
                                 decoration:  BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
 
                                   boxShadow: [
-                                    BoxShadow(
+                                    isHovered ? BoxShadow(
                                       color: Color.fromRGBO(0, 49, 94, 0.5),
-                                      spreadRadius: 2,
-                                      blurRadius: 5,
+                                      spreadRadius: 1,
+                                      blurRadius: 1,
                                       offset: Offset(0, 1),
+                                    ) : BoxShadow(
+                                      color: Color.fromRGBO(0, 49, 94, 0),
+
                                     )
                                   ],
 

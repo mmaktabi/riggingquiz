@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/old/game_service.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:universal_html/js.dart';
@@ -15,7 +16,6 @@ class CombinedProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   late final StreamSubscription<User?> _authStateChangesSubscription;
   StreamSubscription<DatabaseEvent>? _duelRequestSubscription;
-  final GameService _gameService = GameService();
 
   final UserService userService; // Benutzerabhängigkeit wird injiziert
   final BuildContext context; // Benutzerabhängigkeit wird injiziert
@@ -125,7 +125,7 @@ class CombinedProvider with ChangeNotifier {
             QButton(
               onPressed: () async {
                 final userService = Provider.of<UserService>(context, listen: false);
-                await _gameService.declineDuelRequest(gameId, userService.uid!);
+                await GameManager.instance.declineDuelRequest(gameId, userService.uid!);
                 Navigator.of(dialogContext).pop();
               },
               buttonText: "Ablehnen",
@@ -134,8 +134,8 @@ class CombinedProvider with ChangeNotifier {
               buttonText: "Annehmen",
               onPressed: () async {
                 final userService = Provider.of<UserService>(context, listen: false);
-                await _gameService.acceptDuelRequest(gameId, userService.uid!);
-                await _gameService.startGameSession(gameId);
+                await GameManager.instance.acceptDuelRequest(gameId, userService.uid!);
+                await GameManager.instance.startGameSession(gameId);
                 Navigator.of(dialogContext).pop();
 
                 Navigator.push(

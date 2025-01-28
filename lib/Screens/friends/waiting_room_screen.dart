@@ -1,11 +1,9 @@
 import 'dart:async';
-
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/utils/widget_package.dart';
@@ -28,8 +26,6 @@ class WaitingRoomScreen extends StatefulWidget {
 }
 
 class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
-  final GameService _gameService = GameService();
-  late StreamSubscription _gameStatusSubscription;
   Map<String, dynamic>? currentUserData;
   Map<String, dynamic>? opponentUserData;
   bool isLoading = true;
@@ -41,70 +37,45 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
     _listenForGameStart();
   }
 
-  @override
-  void dispose() {
-    _gameStatusSubscription.cancel();
-    super.dispose();
-  }
-
   Future<void> _fetchUserData() async {
     try {
       final userService = Provider.of<UserService>(context, listen: false);
       final userUid = userService.uid!;
       final friendUid = widget.friendUid;
 
-      // Aktuelle Benutzerdaten abrufen
-      currentUserData = await _gameService.getUserDataMap(userUid);
-
-      // Gegnerdaten abrufen
-      opponentUserData = await _gameService.getUserDataMap(friendUid);
+      currentUserData = await GameManager.instance.fetchUserData(userUid);
+      opponentUserData = await GameManager.instance.fetchUserData(friendUid);
 
       setState(() {
         isLoading = false;
       });
 
-      // Überprüfe, ob die Daten existieren
-      if (currentUserData == null) {
+      if (currentUserData == null || opponentUserData == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content:
-                  Text('Deine Benutzerdaten konnten nicht geladen werden.')),
+          SnackBar(
+            content: Text(currentUserData == null
+                ? 'Deine Benutzerdaten konnten nicht geladen werden.'
+                : 'Die Benutzerdaten des Gegners konnten nicht geladen werden.'),
+          ),
         );
-        // Optional: Navigiere zurück oder zeige eine Fehlermeldung an
-      }
-
-      if (opponentUserData == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text(
-                  'Die Benutzerdaten des Gegners konnten nicht geladen werden.')),
-        );
-        // Optional: Navigiere zurück oder zeige eine Fehlermeldung an
       }
     } catch (e) {
       setState(() {
         isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Fehler beim Laden der Benutzerdaten: $e')),
+        SnackBar(content: Text(e.toString())),
       );
     }
   }
 
   void _listenForGameStart() {
-    final userService = Provider.of<UserService>(context, listen: false);
-    final userUid = userService.uid!;
-
-    _gameStatusSubscription = FirebaseDatabase.instance
-        .ref()
-        .child('game_sessions/${widget.gameId}')
-        .onValue
-        .listen((event) {
-      if (event.snapshot.exists) {
-        final gameData = Map<String, dynamic>.from(event.snapshot.value as Map);
-        final status = gameData['status'] as String?;
-
+    GameManager.instance.startListeningToGameStatus(
+      gameId: widget.gameId,
+      onGameStatusChanged: (status, gameData) {
         if (status == 'ongoing') {
+          final userService = Provider.of<UserService>(context, listen: false);
+          final userUid = userService.uid!;
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -116,16 +87,18 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
           );
         } else if (status == 'declined') {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Dein Gegner hat das Spiel abgelehnt.')),
+            const SnackBar(
+                content: Text('Dein Gegner hat das Spiel abgelehnt.')),
           );
           Navigator.pop(context);
         }
-      }
-    });
+      },
+    );
   }
 
+
   Future<void> _cancelGame() async {
-    await _gameService.deleteGameSession(widget.gameId);
+    await GameManager.instance.deleteGameSession(widget.gameId);
     Navigator.pop(context);
   }
 
@@ -162,8 +135,6 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(height: 150),
-
-                    // Benutzer- und Gegnerbilder und Namen anzeigen
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -194,7 +165,8 @@ class _WaitingRoomScreenState extends State<WaitingRoomScreen> {
                     ),
                   ],
                 )
-              : const Center(child: Text('Fehler beim Laden der Benutzerdaten.')),
+              : const Center(
+                  child: Text('Fehler beim Laden der Benutzerdaten.')),
     );
   }
 }

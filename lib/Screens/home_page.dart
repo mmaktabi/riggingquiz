@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/old/game_service.dart';
 import 'package:rigging_quiz/Screens/friends/find_friends.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/main_web.dart';
@@ -16,6 +16,7 @@ import 'package:rigging_quiz/widgets/avatar.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/carousel_quizes.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+import 'package:rigging_quiz/widgets/questions_view/Answer_tile.dart';
 import 'package:rigging_quiz/widgets/questions_view/questionNumber.dart';
 import 'package:rigging_quiz/widgets/score/list_history.dart';
 
@@ -35,8 +36,8 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: QColors.primaryColor.withOpacity(0.5),
             ),
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,

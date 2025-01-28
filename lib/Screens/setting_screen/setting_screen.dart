@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:rigging_quiz/Screens/setting_screen/datenschutz.dart';
 import 'package:rigging_quiz/Screens/setting_screen/edit_email/edit_email.dart';
 import 'package:rigging_quiz/Screens/setting_screen/edit_name/editName.dart';
 import 'package:rigging_quiz/SignInPage.dart';
@@ -8,6 +9,8 @@ import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/widgets/avatar.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../../utils/constant.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -45,8 +48,7 @@ class _SettingScreenState extends State<SettingScreen> {
             _buildAccountOption(
               icon: Icons.lock_outline_rounded,
               title: 'Zugangsdaten festlegen',
-              subtitle:
-                  'Sorge dafür, dass dein Fortschritt immer sicher bleibt!',
+              subtitle: 'Sorge dafür, dass dein Fortschritt immer sicher bleibt!',
               onTap: () {
                 Navigator.push(
                     context,
@@ -54,22 +56,23 @@ class _SettingScreenState extends State<SettingScreen> {
                         builder: (context) => const EditEmailPassword()));
               },
             ),
-            const SizedBox(height: 16),
-            /*   _buildSectionTitle('Weitere Einstellungen'),
-          //  _buildDifficultyOption(userService),
-            //  _buildNotificationOption(userService),
-            GestureDetector(
+            _buildAccountOption(
+              icon: Icons.lock_outline_rounded,
+              title: 'Datenschutz',
+              subtitle: 'Deine Daten sind bei uns stets sicher und geschützt!',
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const FaqScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PrivacyPolicyPage()));
               },
-              child: _buildAccountOption(
-                icon: Icons.question_mark_sharp,
-                title: 'FAQ',
-                subtitle: 'Häufig gestellte Fragen',
-              ),
-            ),*/
+            ),
+
+            _buildDeleteAccount(userService),
+
             _buildLogoutButton(userService),
-            const SizedBox(height: 300),
+            const SizedBox(height: 16),
+
           ],
         ),
       ),
@@ -125,20 +128,20 @@ class _SettingScreenState extends State<SettingScreen> {
                   height: iconSize,
                   decoration: icon != null
                       ? const BoxDecoration(
-                          color: QColors.white,
-                          shape: BoxShape.circle,
-                        )
+                    color: QColors.white,
+                    shape: BoxShape.circle,
+                  )
                       : null,
                   margin: const EdgeInsets.all(8.0),
                   child: icon != null
                       ? Icon(icon, color: QColors.primaryColor)
                       : iconAsset != null
-                          ? qAvatar(
-                              avatar: iconAsset,
-                              width: iconSize / 2,
-                              height: iconSize / 2,
-                            )
-                          : Container(),
+                      ? qAvatar(
+                    avatar: iconAsset,
+                    width: iconSize / 2,
+                    height: iconSize / 2,
+                  )
+                      : Container(),
                 ),
                 Expanded(
                   child: Column(
@@ -153,13 +156,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 4.0),
                         child: subtitle != null
                             ? QText(
-                                text: subtitle,
-                                style: primaryTextStyle(
-                                  fontSize: 14,
-                                  weight: FontWeight.w400,
-                                  color: ColorsHelpers.grey2,
-                                ),
-                              )
+                          text: subtitle,
+                          style: primaryTextStyle(
+                            fontSize: 14,
+                            weight: FontWeight.w400,
+                            color: ColorsHelpers.grey2,
+                          ),
+                        )
                             : subtitleWidget,
                       ),
                     ],
@@ -179,67 +182,48 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  Widget _buildNotificationOption(UserService userService) {
-    return _buildAccountOption(
-      title: "Benachrichtigungen",
-      subtitleWidget: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: selectedNotification == "Aktiviert"
-              ? QColors.accentColor
-              : QColors.secondaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        onPressed: () async {
-          bool isEnabled = selectedNotification == "Aktiviert";
-          await userService.updateNotification(!isEnabled);
-          setState(() {
-            selectedNotification = isEnabled ? "Deaktiviert" : "Aktiviert";
-          });
-        },
-        child: QText(
-          text: selectedNotification ?? "Unbekannt",
-          color: selectedNotification == "Aktiviert"
-              ? Colors.white
-              : QColors.primaryColor,
-          weight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+  Widget _buildDeleteAccount(UserService userService) {
+    return Column(
+      children: [
+        _buildAccountOption(
+          icon: Icons.delete,
+          title: 'Konto löschen',
+          subtitle: 'Durch das Löschen deines Kontos werden all deine Daten dauerhaft entfernt.',
+          onTap: () async {
+            bool confirmed = await _showDeleteConfirmationDialog();
+            if (!confirmed) return;
 
-  Widget _buildDifficultyOption(UserService userService) {
-    return _buildAccountOption(
-      title: "Schwierigkeiten",
-      subtitleWidget: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: ['Einfach', 'Normal', 'Schwierig'].map((difficulty) {
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: selectedDifficulty == difficulty
-                  ? QColors.accentColor
-                  : QColors.secondaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            onPressed: () async {
-              await userService.updateDifficulty(difficulty);
-              setState(() {
-                selectedDifficulty = difficulty;
-              });
-            },
-            child: QText(
-              text: difficulty,
-              color: selectedDifficulty == difficulty
-                  ? Colors.white
-                  : QColors.primaryColor,
-              weight: FontWeight.bold,
-            ),
-          );
-        }).toList(),
-      ),
+            try {
+              final user = FirebaseAuth.instance.currentUser;
+              final uid = user?.uid;
+
+              if (user == null || uid == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Benutzer nicht gefunden.')),
+                );
+                return;
+              }
+
+              // Lösche den Benutzer aus der Realtime Database
+              await FirebaseDatabase.instance.ref('users/$uid').remove();
+
+              // Lösche den Benutzer aus Firebase Auth
+              await user.delete();
+
+              // Melde den Benutzer ab und navigiere zur Login-Seite
+              await userService.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const SignInPage()),
+              );
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Fehler beim Löschen des Kontos: $e')),
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 
@@ -254,12 +238,37 @@ class _SettingScreenState extends State<SettingScreen> {
             MaterialPageRoute(builder: (context) => const SignInPage()),
           );
         },
-        buttonText: 'Logout',
+        buttonText: 'Ausloggen',
         fontSize: 18,
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
         textColor: Colors.red,
         textButton: true,
       ),
     );
+  }
+
+  Future<bool> _showDeleteConfirmationDialog() async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Konto löschen'),
+        content: const Text(
+            'Bist du sicher, dass du dein Konto unwiderruflich löschen möchtest?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Abbrechen'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'Löschen',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

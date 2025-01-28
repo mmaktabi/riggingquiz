@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rigging_quiz/Screens/friends/friendservice.dart';
+import 'package:rigging_quiz/game_utils/friendservice.dart';
 import 'package:rigging_quiz/Screens/friends/my_friends.dart';
 import 'package:rigging_quiz/Screens/setting_screen/setting_screen.dart';
 import 'package:rigging_quiz/data/user_provider.dart';

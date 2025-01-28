@@ -52,8 +52,18 @@ class _QuestionViewState extends State<QuestionView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                QColors.white, // Oben undurchsichtig
+                QColors.white.withOpacity(0.5), // Unten transparent
+              ],
+            ),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -63,11 +73,17 @@ class _QuestionViewState extends State<QuestionView> {
                   number: widget.index,
                 ),
               ),
+              Center(
+                child: Image.asset(
+                  "assets/app_logo_leer.png",
+                  height: 110,
+                ),
+              ),
               Align(
                 alignment: Alignment.centerRight,
                 child: IconButton(
                   icon: const Icon(Icons.exit_to_app_rounded,
-                      size: 30, color: QColors.white),
+                      size: 30, color: QColors.primaryColor),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -76,6 +92,7 @@ class _QuestionViewState extends State<QuestionView> {
             ],
           ),
         ),
+
         const SizedBox(height: 20),
         _buildQuestionHeader(),
         Padding(
@@ -144,12 +161,16 @@ class _QuestionViewState extends State<QuestionView> {
         final isSelected = widget.selectedAnswers.contains(index);
 
         return AnswerTile(
-            isPressed: widget.isPressed,
-            onAnswerSelected: (p0) => widget.onAnswerSelected(index),
-            answer: answer,
-            isCorrect: isCorrect,
-            isSelected: isSelected,
-            index: index);
+          isPressed: widget.isPressed,
+          onAnswerSelected: (index) {
+            widget.onAnswerSelected(index); // Zustand aktualisieren
+          },
+          answer: answer,
+          isCorrect: isCorrect,
+          isSelected: isSelected,
+          index: index,
+        );
+
       },
     );
   }

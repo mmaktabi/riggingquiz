@@ -3,12 +3,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
 
-class GameService {
+class GameServicess {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
   final DatabaseReference _gameSessionsRef =
-      FirebaseDatabase.instance.ref().child('game_sessions');
+  FirebaseDatabase.instance.ref().child('game_sessions');
   final DatabaseReference _categoriesRef =
-      FirebaseDatabase.instance.ref().child('categories');
+  FirebaseDatabase.instance.ref().child('categories');
 
   // Lösche eine Spielsession
   Future<void> deleteGameSession(String gameId) async {
@@ -127,9 +127,9 @@ class GameService {
       }
 
       final categoryData =
-          Map<String, dynamic>.from(categorySnapshot.value as Map);
+      Map<String, dynamic>.from(categorySnapshot.value as Map);
       final questionsMap =
-          Map<String, dynamic>.from(categoryData['questions'] ?? {});
+      Map<String, dynamic>.from(categoryData['questions'] ?? {});
       if (questionsMap.isEmpty) {
         throw Exception('Keine Fragen in der Kategorie gefunden.');
       }
@@ -194,7 +194,7 @@ class GameService {
       }
 
       final questionData =
-          Map<String, dynamic>.from(questionSnapshot.value as Map);
+      Map<String, dynamic>.from(questionSnapshot.value as Map);
 
       return {
         'question': _mapToQuiz(questionData),
@@ -228,7 +228,7 @@ class GameService {
       final playersData = Map<String, dynamic>.from(gameData['players']);
 
       final playerData =
-          Map<String, dynamic>.from(playersData[playerUid] ?? {});
+      Map<String, dynamic>.from(playersData[playerUid] ?? {});
       final questionIds = List<String>.from(gameData['questionIds'] ?? []);
       final currentQuestionIndex = playerData['currentQuestionIndex'];
 
@@ -297,14 +297,14 @@ class GameService {
 
     if (snapshot.exists) {
       Map<String, dynamic> gameData =
-          Map<String, dynamic>.from(snapshot.value as Map);
+      Map<String, dynamic>.from(snapshot.value as Map);
 
       bool scoresUpdated = gameData['scoresUpdated'] ?? false;
       String status = gameData['status'] ?? 'ongoing';
 
       if (status == 'finished' && !scoresUpdated) {
         Map<String, dynamic> playersData =
-            Map<String, dynamic>.from(gameData['players'] ?? {});
+        Map<String, dynamic>.from(gameData['players'] ?? {});
         List<String> playerUids = playersData.keys.toList();
 
         if (playerUids.length == 2) {
@@ -351,20 +351,20 @@ class GameService {
       question: data['question'] ?? '',
       hint: data['hint'] ?? '',
       questionType: QuizQuestionType.values.firstWhere(
-        (type) => type.name == data['questionType'],
+            (type) => type.name == data['questionType'],
         orElse: () => QuizQuestionType.multipleChoice,
       ),
       difficulty: QuizDifficulty.values.firstWhere(
-        (level) => level.name == data['difficulty'],
+            (level) => level.name == data['difficulty'],
         orElse: () => QuizDifficulty.beginner,
       ),
       multiSelect: (data['multiSelect'] as List<dynamic>?)
-              ?.map((e) => Map<String, dynamic>.from(e as Map))
-              .toList() ??
+          ?.map((e) => Map<String, dynamic>.from(e as Map))
+          .toList() ??
           [],
       matchingPairs: (data['matchingPairs'] as List<dynamic>?)
-              ?.map((e) => Map<String, String>.from(e as Map))
-              .toList() ??
+          ?.map((e) => Map<String, String>.from(e as Map))
+          .toList() ??
           [],
       imageUrl: data['imageUrl'],
       score: data['score'] is int ? data['score'] : 1,

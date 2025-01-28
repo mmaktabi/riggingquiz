@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rigging_quiz/Screens/friends/friendservice.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/game_utils/friendservice.dart';
+import 'package:rigging_quiz/old/game_service.dart';
 import 'package:rigging_quiz/Screens/friends/waiting_room_screen.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/model/quiz_model.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
@@ -23,7 +24,6 @@ class MyFriends extends StatefulWidget {
 
 class _MyFriendsState extends State<MyFriends> {
   final FriendService _friendService = FriendService();
-  final GameService _gameService = GameService();
 
   List<Map<String, dynamic>> _friendRequests = [];
   List<Map<String, dynamic>> _friends = [];
@@ -123,7 +123,7 @@ class _MyFriendsState extends State<MyFriends> {
         return;
       }
 
-      final gameId = await _gameService.sendDuelRequest(
+      final gameId = await GameManager.instance.sendDuelRequest(
         requesterUid: requesterUid!,
         friendUid: friendUid,
         categoryId: categoryId,

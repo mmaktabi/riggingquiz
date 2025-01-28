@@ -107,6 +107,8 @@ class DetailQuizScreen extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         color: QColors.primaryColor.withOpacity(0.2),
+
+
       ),
       padding: const EdgeInsets.all(16),
       child: Row(

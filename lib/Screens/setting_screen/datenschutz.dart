@@ -7,8 +7,11 @@ class PrivacyPolicyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return QLayout(
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+      addEmptyHeader: true,
+      backButton: true,
+
+      child: Container(
+        color: Colors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

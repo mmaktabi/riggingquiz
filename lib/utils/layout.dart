@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/widgets/score/score_header.dart';
 
@@ -31,7 +32,6 @@ class _QLayoutState extends State<QLayout> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    double height = MediaQuery.of(context).size.height;
     double containerWidth = width > widget.maxWidth ? widget.maxWidth : width;
 
     return Scaffold(
@@ -58,8 +58,8 @@ class _QLayoutState extends State<QLayout> {
             ),
           ),
           width: containerWidth,
-          child:ListView(
-            physics:  ClampingScrollPhysics(), // Verbesserte Scroll-Physik
+          child: ListView(
+            physics: ClampingScrollPhysics(), // Verbesserte Scroll-Physik
             children: [
               // Back-Button als Header
               if (widget.backButton)
@@ -68,18 +68,22 @@ class _QLayoutState extends State<QLayout> {
                     icon: const Icon(Icons.arrow_back,
                         size: 30, color: QColors.white),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      if (Navigator.canPop(context)) {
+                        // Zur vorherigen Seite zurückkehren
+                        Navigator.of(context).pop();
+                      } else {
+                        // Zur Startseite weiterleiten
+                        context.go("/");
+                      }
                     },
                   ),
                   backgroundColor: Colors.transparent,
                   elevation: 0,
                 ),
               // Optionaler leerer Header
-              if (widget.addEmptyHeader)
-                const SizedBox(height: 50),
+              if (widget.addEmptyHeader) const SizedBox(height: 50),
               // Score-Header anzeigen
-              if (widget.showScore)
-                const ScoreHeader(badges: []),
+              if (widget.showScore) const ScoreHeader(badges: []),
               // Der Hauptinhalt
               widget.child,
               // Platz am Ende für Polsterung

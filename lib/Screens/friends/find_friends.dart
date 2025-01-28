@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rigging_quiz/Screens/friends/friendservice.dart';
+import 'package:rigging_quiz/game_utils/friendservice.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
 import 'package:rigging_quiz/widgets/animatedlogowithshare.dart';

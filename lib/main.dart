@@ -3,11 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager.dart';
+import 'package:rigging_quiz/Screens/live_quiz_screen/quiz_manager_local.dart';
 import 'package:rigging_quiz/Screens/management_system.dart/category_list_screen.dart';
+import 'package:rigging_quiz/Screens/setting_screen/datenschutz.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/SignInPage.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
+import 'package:rigging_quiz/game_utils/quiz_manager.dart';
 import 'package:rigging_quiz/main_web.dart';
 import 'package:rigging_quiz/utils/admin_auth/auth_screen.dart';
 import 'package:rigging_quiz/utils/score_service.dart';
@@ -20,7 +22,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:rigging_quiz/SignInPage.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
 import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
-import 'package:rigging_quiz/Screens/friends/game_service.dart';
+import 'package:rigging_quiz/old/game_service.dart';
 void main() async {
   setPathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +34,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => UserService()),
         ChangeNotifierProvider(create: (_) => ScoreService()),
-        ChangeNotifierProvider(create: (_) => QuizProvider()),
+        ChangeNotifierProvider(create: (_) => QuizProviderLocal()),
       ],
       child: MyApp(),
     ),
@@ -55,6 +57,12 @@ class MyApp extends StatefulWidget {
         builder: (context, state) {
           return const AuthAdminScreen(
               child: CategoryListScreen());
+        },
+      ),
+      GoRoute(
+        path: '/datenschutz',
+        builder: (context, state) {
+          return const PrivacyPolicyPage();
         },
       ),
     ],
@@ -97,7 +105,6 @@ class _AuthGateState extends State<AuthGate> {
   StreamSubscription<User?>? _authSubscription;
   StreamSubscription<DatabaseEvent>? _duelSubscription;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GameService _gameService = GameService();
 
   @override
   void initState() {
@@ -117,7 +124,7 @@ class _AuthGateState extends State<AuthGate> {
 
   void _startDuelListener() {
     final userUid = _user?.uid;
-    if (userUid == null) return;
+    if (userUid == null || _duelSubscription != null) return; // Listener existiert bereits
 
     _duelSubscription = FirebaseDatabase.instance
         .ref()
@@ -189,7 +196,7 @@ class _AuthGateState extends State<AuthGate> {
             TextButton(
               onPressed: () async {
                 if (_user != null) {
-                  await _gameService.declineDuelRequest(gameId, _user!.uid);
+                  await GameManager.instance.declineDuelRequest(gameId, _user!.uid);
                 }
                 Navigator.of(dialogContext).pop();
               },
@@ -198,8 +205,8 @@ class _AuthGateState extends State<AuthGate> {
             TextButton(
               onPressed: () async {
                 if (_user != null) {
-                  await _gameService.acceptDuelRequest(gameId, _user!.uid);
-                  await _gameService.startGameSession(gameId);
+                  await GameManager.instance.acceptDuelRequest(gameId, _user!.uid);
+                  await GameManager.instance.startGameSession(gameId);
                 }
                 Navigator.of(dialogContext).pop();
                 Navigator.push(

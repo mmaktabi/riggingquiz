@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_button/flutter_animated_button.dart';
+import 'package:flutter_launcher_icons/constants.dart';
+import 'package:pretty_animated_buttons/pretty_animated_buttons.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+
 class AnswerTile extends StatelessWidget {
   final String answer;
   final bool isCorrect;
@@ -23,37 +27,40 @@ class AnswerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final tileColor = isPressed
         ? (isCorrect
-        ? QColors.accentColor
+            ? QColors.accentColor
+            : isSelected
+                ? QColors.errorColor
+                : QColors.white)
         : isSelected
-        ? QColors.errorColor
-        : QColors.white)
-        : isSelected
-        ? QColors.accentColor
-        : QColors.white;
+            ? QColors.accentColor
+            : QColors.white;
 
     final textColor = isPressed && isCorrect || isSelected
         ? QColors.white
         : QColors.primaryColor;
 
-
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: () => onAnswerSelected(index),
-        child: Container(
-          margin: const EdgeInsets.symmetric(vertical: 8),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: tileColor,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: QText(
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: AnimatedButton.strip(
+              onPress: () => onAnswerSelected(index),
               text: answer,
-              color: textColor,
+              backgroundColor: Colors.white,
+              selectedBackgroundColor: tileColor,
+
+
+              stripColor: QColors.primaryColor,
+              animationDuration: Duration(milliseconds: 300),
+              stripTransitionType: StripTransitionType.LEFT_TO_RIGHT,
+              isReverse: false,
+
+              textStyle: primaryTextStyle(color: textColor),
+              selectedTextColor: textColor,
             ),
           ),
-        ),
+        ],
       ),
     );
   }

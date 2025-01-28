@@ -17,7 +17,7 @@ class QuestionNumber extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: QText(text:
           '#${number}',
-          color: QColors.primaryColor,
+          color: QColors.white,
           fontSize: 20,
         ),
       ),
@@ -30,7 +30,7 @@ class TagPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = QColors.backgroundColor
+      ..color = QColors.primaryColor
       ..style = PaintingStyle.fill;
 
     final path = Path();
