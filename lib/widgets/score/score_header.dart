@@ -105,7 +105,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
       scoreFontSize = 22;
       schaekelSize = 45;
       trophySize =  55;
-      imgSize =  80;
+      imgSize =  70;
     } else {
       // Für kleinere Bildschirme (Handys)
       iconSize = width * 0.05;
@@ -141,7 +141,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                               Icon(
                                 greetingService.icon,
                                 size: iconSize,
-                                color: QColors.accentColor,
+                                color: QColors.white,
                               ),
                               Container(
                                 margin: const EdgeInsets.only(left: 8),
@@ -149,7 +149,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                                   text: greetingService.greeting,
                                   weight: FontWeight.w700,
                                   fontSize: greetingFontSize,
-                                  color: QColors.accentColor,
+                                  color: QColors.white,
                                 ),
                               ),
                             ],
@@ -225,7 +225,7 @@ class _ScoreHeaderState extends State<ScoreHeader> {
                           child: qAvatar(avatar: userService.avatarUrl ?? ""),
                         )
                             : CircleAvatar(
-                          backgroundColor: QColors.accentColor,
+                          backgroundColor: QColors.white,
                           radius: 30,
                         ),
                       ),
