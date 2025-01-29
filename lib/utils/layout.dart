@@ -51,7 +51,8 @@ class _QLayoutState extends State<QLayout> {
               end: Alignment.bottomCenter,
               stops: [0.0, 1.0, 1.0],
               colors: [
-                QColors.primaryColor,
+
+                QColors.dullLavender,
                 QColors.backgroundColor,
                 QColors.backgroundColor,
               ],

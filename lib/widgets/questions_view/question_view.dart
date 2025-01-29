@@ -49,48 +49,41 @@ class _QuestionViewState extends State<QuestionView> {
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.sizeOf(context).height;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
 
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                QColors.white, // Oben undurchsichtig
-                QColors.white.withOpacity(0.5), // Unten transparent
-              ],
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: QuestionNumber(
+                number: widget.index,
+              ),
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: QuestionNumber(
-                  number: widget.index,
-                ),
-              ),
-              Center(
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12),bottomRight: Radius.circular(12)),
                 child: Image.asset(
-                  "assets/app_logo_leer.png",
-                  height: 110,
+                  "assets/app_logo.png",
+                  height: height /5,
                 ),
               ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: IconButton(
-                  icon: const Icon(Icons.exit_to_app_rounded,
-                      size: 30, color: QColors.primaryColor),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: const Icon(Icons.exit_to_app_rounded,
+                    size: 30, color: QColors.primaryColor),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
 
         const SizedBox(height: 20),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:pretty_animated_buttons/pretty_animated_buttons.dart';
 import 'package:provider/provider.dart';
 import 'package:rigging_quiz/Screens/friends/duel_game_screen.dart';
 import 'package:rigging_quiz/old/game_service.dart';
@@ -16,6 +17,7 @@ import 'package:rigging_quiz/widgets/avatar.dart';
 import 'package:rigging_quiz/widgets/button.dart';
 import 'package:rigging_quiz/widgets/carousel_quizes.dart';
 import 'package:rigging_quiz/widgets/custom_text.dart';
+import 'package:rigging_quiz/widgets/forms/qanimated_button.dart';
 import 'package:rigging_quiz/widgets/questions_view/Answer_tile.dart';
 import 'package:rigging_quiz/widgets/questions_view/questionNumber.dart';
 import 'package:rigging_quiz/widgets/score/list_history.dart';
@@ -62,10 +64,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-
-
           const Padding(
-            padding: EdgeInsets.only(top: 12, bottom: 12),
+            padding: EdgeInsets.only(top: 5, bottom: 5),
             child: CarouselQuizes(),
           ),
           // Duell mit Freunden Abschnitt
@@ -78,95 +78,60 @@ class HomeScreen extends StatelessWidget {
                 offset: Offset(0, 1),
               )
             ], color: QColors.secondaryColor),
-            child: Stack(
-              children: [
-                Positioned(
-                    left: 0,
-                    bottom: 0,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20)),
-                      child: SvgPicture.asset(
-                        Images.ovalWithOutlineBottomHomeScreen,
-                        width: 160,
-                      ),
-                    )),
-                Positioned(
-                    right: 1,
-                    top: 0,
-                    child: RotationTransition(
-                      turns: const AlwaysStoppedAnimation(180 / 360),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(20)),
-                        child: SvgPicture.asset(
-                          Images.ovalWithOutlineBottomHomeScreen,
-                          width: 160,
-                        ),
-                      ),
-                    )),
-                Positioned(
-                    left: 16,
-                    top: 16,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20)),
-                      child: SvgPicture.asset(
-                        QImages.pana,
-                        height: 120,
-                      ),
-                    )),
-                Positioned(
-                    right: 15,
-                    bottom: 42,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(20)),
-                      child: SvgPicture.asset(
-                        QImages.amico,
-                        width: 120,
-                      ),
-                    )),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 40),
-                      child: Column(
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            child: const QText(
-                                text: 'Gemeinsam',
-                                weight: FontWeight.w500,
-                                fontSize: 14,
-                                letterSpacing: 5),
-                          ),
-                          const QText(
-                              text: 'Lade deine Freunde zu \neinem Duell ein!',
-                              weight: FontWeight.w500,
-                              textAlign: TextAlign.center,
-                              fontSize: 18),
-                          Container(
-                            margin: const EdgeInsets.only(top: 16),
-                            child: QButton(
-                              icon: Icons.search_rounded,
-                              onPressed: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const FindFriend(),
-                                    ));
-                              },
-                              buttonText: "Finde deine Freunde",
-                            ),
-                          ),
-                        ],
-                      ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 15.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Image.asset(
+                      Images.appLogoLeer,
                     ),
                   ),
-                )
-              ],
+
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: const QText(
+                              text: 'Gemeinsam',
+                              weight: FontWeight.w500,
+                              fontSize: 14,
+                              letterSpacing: 5),
+                        ),
+                        const QText(
+                            text: 'Lade deine Freunde zu \neinem Duell ein!',
+                            weight: FontWeight.w500,
+                            textAlign: TextAlign.center,
+                            fontSize: 18),
+
+                        Container(
+                          margin: const EdgeInsets.only(top: 12),
+                          width: 420,
+                          child: QButton(
+                            icon: Icons.search_rounded,
+
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const FindFriend(),
+                                  ));
+                            },
+                            buttonText: "Finde deine Freunde",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),     Expanded(
+                    child: Image.asset(
+                      Images.appLogoLeer,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 

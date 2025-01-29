@@ -1,6 +1,7 @@
 class Images {
   // Icons
   static const String appLogo = 'assets/icons/rigging_quiz.png';
+  static const String appLogoLeer = 'assets/app_logo_leer.png';
   static const String ovalWithOutlineTop = 'assets/icons/oval_outline_top.svg';
   static const String ovalWithOutlineBottom =
       'assets/icons/oval_outline_bottom.svg';

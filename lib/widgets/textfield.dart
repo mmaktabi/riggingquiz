@@ -15,7 +15,7 @@ class QTextField extends StatefulWidget {
   const QTextField({
     super.key,
     required this.labelText,
-    this.controller,
+    this.controller, // 👈 Optionaler Controller
     this.isPassword = false,
     this.validator,
     this.keyboardType,
@@ -30,26 +30,50 @@ class QTextField extends StatefulWidget {
 
 class _QTextFieldState extends State<QTextField> {
   bool _isPasswordVisible = false;
+  late FocusNode _focusNode;
+  TextEditingController? _internalController; // 👈 Falls kein Controller übergeben wird
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    // Falls kein Controller übergeben wurde, erstelle einen internen
+    if (widget.controller == null) {
+      _internalController = TextEditingController();
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+
+    // Falls ein interner Controller erstellt wurde, dispose ihn
+    _internalController?.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
-        controller: widget.controller,
+        focusNode: _focusNode,
+        controller: widget.controller ?? _internalController, // 👈 Verwende externen oder internen Controller
         obscureText: widget.isPassword && !_isPasswordVisible,
         keyboardType: widget.keyboardType ?? TextInputType.text,
-        cursorColor: QColors.primaryColor, // Cursor-Farbe
-        style: primaryTextStyle(color: QColors.primaryColor,), // Textfarbe
-        validator: widget.validator, // Validator für Eingabeprüfung
-        onChanged: widget.onChanged, // Callback bei Änderungen
-        onFieldSubmitted: widget.onSubmitted, // Callback bei Abschluss der Eingabe
-        onSaved: widget.onSaved, // Callback beim Speichern des Formulars
+        cursorColor: QColors.primaryColor,
+        style: primaryTextStyle(color: QColors.primaryColor),
+        validator: widget.validator,
+        onChanged: widget.onChanged,
+        onFieldSubmitted: widget.onSubmitted,
+        onSaved: widget.onSaved,
         decoration: InputDecoration(
           labelText: widget.labelText,
-          labelStyle: primaryTextStyle(color: QColors.primaryColor,),
+          labelStyle: primaryTextStyle(color: QColors.primaryColor),
           filled: true,
-          fillColor: QColors.formBgColor, // Hintergrundfarbe des Feldes
+          fillColor: QColors.formBgColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: QColors.primaryColor),
@@ -65,9 +89,7 @@ class _QTextFieldState extends State<QTextField> {
           suffixIcon: widget.isPassword
               ? IconButton(
             icon: Icon(
-              _isPasswordVisible
-                  ? Icons.visibility
-                  : Icons.visibility_off,
+              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
               color: QColors.primaryColor,
             ),
             onPressed: () {

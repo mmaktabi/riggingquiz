@@ -23,17 +23,26 @@ class AnswerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final tileColor = isPressed
         ? (isCorrect
-        ? QColors.accentColor
+        ? QColors.primaryColor1
         : isSelected
         ? QColors.errorColor
         : QColors.white)
         : isSelected
-        ? QColors.accentColor
+        ? QColors.primaryColor1
         : QColors.white;
 
-    final textColor = isPressed && isCorrect || isSelected
+
+    final textColor = isPressed
+        ? (isCorrect
+        ? QColors.primaryColor
+        : isSelected
         ? QColors.white
+        : QColors.primaryColor)
+        : isSelected
+        ? QColors.primaryColor
         : QColors.primaryColor;
+
+
 
 
     return MouseRegion(

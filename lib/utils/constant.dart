@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 class QImages {
   static const String schaekel = "assets/rigging/schaekel.png"; // Dunkelblau
   static const String pana =
-      "assets/rigging/Enthusiastic-pana.svg"; // Dunkelblau
+      "assets/rigging/music_fest.svg"; // Dunkelblau
   static const String amico =
-      "assets/rigging/enthusiastic-amico.svg"; // Dunkelblau
+      "assets/rigging/team_work.svg"; // Dunkelblau
 }
 
 // -----------------------------------------------
 
 class QColors {
   static const Color primaryColor = Color.fromRGBO(0, 49, 94, 1); // Dunkelblau
+  static const Color primaryColor1 = Color.fromRGBO(186, 255, 41, 1); // Dunkelblau
+  static const Color primaryColor2 = Color.fromRGBO(0, 49, 94, 1); // Dunkelblau
   // Ergänzende Farben der modernen Palette:
   static const Color accentColor = Color.fromRGBO(
       27, 137, 65, 1.0); // Neon Pink, als moderner, auffälliger Akzent
@@ -25,7 +27,7 @@ class QColors {
       1); // Helles Cyan-Blau, für Interaktionen, dynamisch und frisch
   static const Color highlightColor = Color.fromRGBO(242, 220, 93,
       1); // Helles Gelb-Gold, für Highlights, schafft visuelle Aufmerksamkeit
-  static const Color accentColorOpacity = Color.fromRGBO(139, 229, 180, 0.9);
+  static const Color accentColorOpacity = Color.fromRGBO(152, 226, 198, 1);
   static const Color dullLavender = Color.fromRGBO(91, 134, 221, 1.0);
 
   static const Color white = Color.fromRGBO(255, 255, 255, 1);
@@ -41,7 +43,7 @@ class QColors {
       255, 255, 255, 1); // Weiß, für Texte auf dunklem Hintergrund
   static const Color textSecondaryColor = Color.fromRGBO(33, 33, 33,
       0.87); // Dunkles Grau, für Texte auf hellem Hintergrund, wirkt moderner als Schwarz
-  static const Color errorColor = Color.fromRGBO(164, 26, 29,
+  static const Color errorColor = Color.fromRGBO(244, 0, 0,
       1); // Warmes Rot, für Fehler, auffällig aber nicht zu aggressiv
 }
 

@@ -19,22 +19,23 @@ class SignInPage extends StatefulWidget {
 
 class _SignInPageState extends State<SignInPage> {
   final _formKey = GlobalKey<FormState>();
-  bool _isSignUp = false; // Flag, um zwischen Sign-In und Sign-Up zu wechseln
+
+  bool _isSignUp = false;
   bool _isLoading = false;
   bool _acceptedPrivacyPolicy = false;
   double _selectedAge = 18;
 
-  // Controller für Textfelder
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
+  // Variablen zum Speichern der eingegebenen Werte
+  String _email = "";
+  String _password = "";
+  String _name = "";
 
   @override
   Widget build(BuildContext context) {
     return QLayout(
       child: Column(
         children: [
-          SizedBox(height: 50),
+          const SizedBox(height: 50),
           const SizedBox(
             width: 220,
             height: 220,
@@ -50,10 +51,11 @@ class _SignInPageState extends State<SignInPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // E-Mail Eingabe
                 QTextField(
                   labelText: 'E-Mail',
-                  controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
+                  onSaved: (value) => _email = value ?? "",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Bitte geben Sie eine E-Mail ein.';
@@ -61,17 +63,18 @@ class _SignInPageState extends State<SignInPage> {
                     return null;
                   },
                 ),
+
+                // Passwort Eingabe
                 QTextField(
                   labelText: 'Passwort',
-                  controller: _passwordController,
                   isPassword: true,
-
+                  onSaved: (value) => _password = value ?? "",
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Bitte geben Sie ein Passwort ein.';
                     }
                     String pattern =
-                        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\\$&*~])[A-Za-z\d!@#\\$&*~]{8,}\$';
+                        r'^(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~])[A-Za-z\d!@#\$&*~]{8,}$';
                     RegExp regex = RegExp(pattern);
 
                     if (!regex.hasMatch(value)) {
@@ -80,12 +83,15 @@ class _SignInPageState extends State<SignInPage> {
                     return null;
                   },
                 ),
+
+                // Zusätzliche Eingaben für Registrierung
                 if (_isSignUp)
                   Column(
                     children: [
+                      // Name Eingabe
                       QTextField(
                         labelText: 'Name',
-                        controller: _nameController,
+                        onSaved: (value) => _name = value ?? "",
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Bitte geben Sie einen Namen ein.';
@@ -93,15 +99,15 @@ class _SignInPageState extends State<SignInPage> {
                           return null;
                         },
                       ),
+
+                      // Alter Eingabe mit Slider
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 20),
                             QText(
                               text: 'Alter: ${_selectedAge.round()}',
-
                             ),
                             Expanded(
                               child: Slider(
@@ -122,6 +128,8 @@ class _SignInPageState extends State<SignInPage> {
                           ],
                         ),
                       ),
+
+                      // Datenschutzerklärung akzeptieren
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Row(
@@ -140,15 +148,15 @@ class _SignInPageState extends State<SignInPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const PrivacyPolicyPage(),
+                                    builder: (context) =>
+                                    const PrivacyPolicyPage(),
                                   ),
                                 );
                               },
-                              child:  MouseRegion(
+                              child: MouseRegion(
                                 cursor: SystemMouseCursors.click,
                                 child: QText(
                                   text: 'Ich akzeptiere die Datenschutzerklärung',
-
                                 ),
                               ),
                             ),
@@ -160,11 +168,16 @@ class _SignInPageState extends State<SignInPage> {
 
                 const SizedBox(height: 20),
 
+                // Anmelde-/Registrierungs-Button
                 QButton(
-                  onPressed: _isLoading || !_acceptedPrivacyPolicy ? null : _submit,
+                  onPressed: _isLoading || (!_acceptedPrivacyPolicy && _isSignUp)
+                      ? null
+                      : _submit,
                   buttonText: _isSignUp ? 'Registrieren' : 'Anmelden',
                 ),
                 if (_isLoading) QWidgets().progressIndicator,
+
+                // Wechsel zwischen Login und Registrierung
                 QButton(
                   textButton: true,
                   textColor: QColors.primaryColor,
@@ -174,6 +187,8 @@ class _SignInPageState extends State<SignInPage> {
                       ? 'Bereits registriert? Hier anmelden'
                       : 'Noch kein Konto? Hier registrieren',
                 ),
+
+                // Anonyme Anmeldung
                 QButton(
                   onPressed: _isLoading ? null : _signInAnonymously,
                   buttonText: 'Anonym fortfahren',
@@ -186,14 +201,18 @@ class _SignInPageState extends State<SignInPage> {
     );
   }
 
+  /// **Wechselt zwischen Login und Registrierung**
   void _toggleSignUp() {
     setState(() {
       _isSignUp = !_isSignUp;
     });
   }
 
+  /// **Anmeldung oder Registrierung**
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+
+    _formKey.currentState!.save(); // 👈 Speichert alle Werte in Variablen
 
     setState(() {
       _isLoading = true;
@@ -202,20 +221,20 @@ class _SignInPageState extends State<SignInPage> {
     try {
       if (_isSignUp) {
         await UserService().signUpUser(
-          _emailController.text,
-          _passwordController.text,
-          _nameController.text,
+          _email,
+          _password,
+          _name,
           _selectedAge.round().toString(),
         );
       } else {
         await UserService().signInUser(
-          _emailController.text,
-          _passwordController.text,
+          _email,
+          _password,
         );
       }
 
       if (mounted) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
@@ -235,6 +254,7 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
+  /// **Anonyme Anmeldung**
   Future<void> _signInAnonymously() async {
     setState(() {
       _isLoading = true;
@@ -243,7 +263,7 @@ class _SignInPageState extends State<SignInPage> {
     try {
       await UserService().signInAnonymouslyUser();
       if (mounted) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
