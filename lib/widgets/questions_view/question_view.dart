@@ -50,7 +50,15 @@ class _QuestionViewState extends State<QuestionView> {
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.sizeOf(context).height;
+    final double width = MediaQuery.of(context).size.width;
 
+    double imgSize;
+    if (width > 600) {
+      imgSize =  height/6;
+    } else {
+
+      imgSize = height/5;
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -65,11 +73,13 @@ class _QuestionViewState extends State<QuestionView> {
               ),
             ),
             Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12),bottomRight: Radius.circular(12)),
-                child: Image.asset(
-                  "assets/app_logo.png",
-                  height: height /5,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ClipOval(
+                  child: Image.asset(
+                    "assets/app_logo.png",
+                    height: imgSize,
+                  ),
                 ),
               ),
             ),

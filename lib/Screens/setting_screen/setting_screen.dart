@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:rigging_quiz/Screens/setting_screen/datenschutz.dart';
 import 'package:rigging_quiz/Screens/setting_screen/edit_email/edit_email.dart';
 import 'package:rigging_quiz/Screens/setting_screen/edit_name/editName.dart';
 import 'package:rigging_quiz/SignInPage.dart';
@@ -12,6 +11,7 @@ import 'package:rigging_quiz/widgets/custom_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../../utils/constant.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -57,17 +57,31 @@ class _SettingScreenState extends State<SettingScreen> {
               },
             ),
             _buildAccountOption(
-              icon: Icons.lock_outline_rounded,
+              icon: Icons.privacy_tip_rounded,
               title: 'Datenschutz',
               subtitle: 'Deine Daten sind bei uns stets sicher und geschützt!',
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const PrivacyPolicyPage()));
+              onTap: () async {
+                const url = 'https://rigging-quiz.de/datenschutz';
+                if (await canLaunchUrl(Uri.parse(url))) {
+                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                } else {
+                throw 'Konnte den Link nicht öffnen: $url';
+                }
               },
             ),
-
+            _buildAccountOption(
+              icon: Icons.support_agent_outlined,
+              title: 'Support',
+              subtitle: 'Deine Daten sind bei uns stets sicher und geschützt!',
+              onTap: () async {
+                const url = 'https://rigging-quiz.de/support';
+                if (await canLaunchUrl(Uri.parse(url))) {
+                  await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                } else {
+                  throw 'Konnte den Link nicht öffnen: $url';
+                }
+              },
+            ),
             _buildDeleteAccount(userService),
 
             _buildLogoutButton(userService),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rigging_quiz/Screens/home_page.dart';
-import 'package:rigging_quiz/Screens/setting_screen/datenschutz.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:rigging_quiz/data/user_provider.dart';
 import 'package:rigging_quiz/utils/constant.dart';
 import 'package:rigging_quiz/utils/layout.dart';
@@ -144,14 +144,13 @@ class _SignInPageState extends State<SignInPage> {
                               },
                             ),
                             GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                    const PrivacyPolicyPage(),
-                                  ),
-                                );
+                              onTap: () async {
+                                const url = 'https://rigging-quiz.de/datenschutz';
+                                if (await canLaunchUrl(Uri.parse(url))) {
+                                await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                                } else {
+                                throw 'Konnte den Link nicht öffnen: $url';
+                                }
                               },
                               child: MouseRegion(
                                 cursor: SystemMouseCursors.click,

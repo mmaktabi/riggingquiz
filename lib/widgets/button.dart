@@ -27,7 +27,7 @@ class QButton extends StatefulWidget {
     this.backgroundGradient,
     this.backgroundColor = QColors.primaryColor,
     this.radius = 13,
-    this.fontSize = 15,
+    this.fontSize = 13,
     this.padding,
     this.icon,
     this.weight = FontWeight.w400,
@@ -170,23 +170,26 @@ class _QButtonState extends State<QButton> with TickerProviderStateMixin {
                           : Padding(
                               padding: widget.padding ??
                                   const EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 12),
+                                      horizontal: 12, vertical: 12),
                               child: widget.icon != null
                                   ? Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
+
                                       children: <Widget>[
                                         Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
+                                          padding:  EdgeInsets.only(
+                                              right: 4),
                                           child: Icon(
                                             widget.icon,
+                                            size: widget.fontSize + 5,
                                             color: widget.textColor,
                                           ),
                                         ),
                                         QText(
                                           text: widget.buttonText,
                                           color: widget.textColor,
+
                                           fontSize: widget.fontSize,
                                           textAlign: TextAlign.center,
                                         ),

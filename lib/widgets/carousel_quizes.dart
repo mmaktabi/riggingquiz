@@ -113,7 +113,7 @@ class _CarouselQuizesState extends State<CarouselQuizes> {
                                 ),
                                 alignment: Alignment.centerLeft,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
@@ -123,11 +123,11 @@ class _CarouselQuizesState extends State<CarouselQuizes> {
                                           ? Image.network(
                                               category.iconImage,
                                               fit: BoxFit.cover,
-                                              height: 111,
+                                              height: 100,
                                             )
-                                          : const SizedBox(height: 111),
+                                          : const SizedBox(height: 100),
                                       Padding(
-                                        padding: const EdgeInsets.all(16.0),
+                                        padding: const EdgeInsets.all(8.0),
                                         child: QText(
                                           text: category.name,
                                           fontSize: 24,
