@@ -9,7 +9,6 @@ import CookieBanner from "@/components/custom/cookie-banner";
 export default function Home() {
   return (
     <>
-    <CookieBanner />
 
       <section className="font-body">
 
