@@ -95,8 +95,8 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html  lang="de">
-      <body className={`${inter.className} ${poppins.className}`}>
-        {children}
+<body className={`${inter.className} ${poppins.className}`} suppressHydrationWarning={true}>
+{children}
         </body>
     </html>
   );

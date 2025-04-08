@@ -18,10 +18,13 @@ export default function CTAButtons() {
     <div className="flex flex-col  gap-4 mt-4 ">
       {/* App Store & Google Play */}
       <div className="flex flex-col md:flex-row gap-4 items-center">
-        <a onClick={() => handleStoreClick("Bald im Apple Store verfügbar!")}>
+        <a onClick={() => {
+          handleStoreClick("Du wirst zum App Store weitergeleitet...");
+          window.open("https://apps.apple.com/de/app/riggingquiz/id6740346534", "_blank");
+        }}>
           <Image src="/rigging/app_store.svg" width={200} height={154} alt="Apple Store Logo" className="cursor-pointer" />
         </a>
-        <a onClick={() => handleStoreClick("Bald im Google Play Store verfügbar!")}>
+        <a onClick={() => handleStoreClick("In Kürze im Google Play Store auch verfügbar!")}>
           <Image src="/rigging/google_store.png" width={222} height={164} alt="Google Play Logo" className="cursor-pointer" />
         </a>
       </div>
