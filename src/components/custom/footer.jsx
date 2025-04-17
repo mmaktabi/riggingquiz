@@ -3,57 +3,40 @@ import React from 'react';
 const Footer = () => {
   return (
     <footer>
-      <div className="bg-[#01315E] mx-auto px-5 md:px-10 py-10  ">
+      <div className="bg-[#01315E] mx-auto px-5 md:px-20 py-10">
+        {/* Haupt-Container: nebeneinander auf md+ */}
+        <div className="flex flex-col md:flex-row justify-between items-center md:items-start text-center md:text-left">
 
-        {/* Kontakt & Links */}
-        <div className="flex flex-col md:flex-row  justify-center text-center md:text-left items-center md:items-start">
-
-          {/* Logo (Links) */}
-          <div className="">
+          {/* Logo ganz links */}
+          <div className="mb-10 md:mb-0">
             <a href="/" className="text-[14px] font-semibold text-white hover:underline">
-              <img src="/rigging/app_logo.png" width={200} height={200}  alt="RiggingQuiz Logo" className=" rounded-lg" />
+              <img src="/rigging/app_logo.png" width={200} height={200} alt="RiggingQuiz Logo" className="rounded-lg" />
             </a>
           </div>
 
-          {/* Kontaktinformationen */}
-          <div className="flex flex-col gap-12 px-20">
+          {/* Rechte Seite: Kontakt & rechtliche Links nebeneinander */}
+          <div className="flex flex-col md:flex-row gap-12 md:gap-24 items-center md:items-start">
 
-            {/* E-Mail */}
-            <div>
-              <div className="flex items-center gap-2 justify-center md:justify-start">
-                <img src="/Mail.svg" alt="E-Mail Icon" />
-                <span className="text-sm font-medium text-[#98A2B3]">E-Mail</span>
-              </div>
-              <a href="mailto:info@apex-riggingschule.de" className="text-[15px] font-semibold text-white hover:underline">
-                info@apex-riggingschule.de
+    
+
+            {/* Rechtliche Links */}
+            <div className="flex flex-col gap-2 md:px-20">
+            <a href="/" className="text-[14px] font-semibold text-white hover:underline">
+                Home
               </a>
-            </div>
-
-            {/* Kontaktformular */}
-            <div>
-              <div className="flex items-center gap-2 justify-center md:justify-start">
-                <img src="/Leave.svg" alt="Kontakt Icon" />
-                <span className="text-sm font-medium text-[#98A2B3]">Kontakt</span>
-              </div>
               <a href="/support" className="text-[14px] font-semibold text-white hover:underline">
-                Support
+                Kontaktformular
+              </a>
+         
+              <a href="/impressum" className="text-[14px] font-semibold text-white hover:underline">
+                Impressum
+              </a>
+              <a href="/datenschutz" className="text-[14px] font-semibold text-white hover:underline">
+                Datenschutzerklärung
               </a>
             </div>
-          </div>
 
-          {/* Rechtliche Links */}
-          <div className="flex flex-col gap-2">
-            <a href="/" className="text-[14px] font-semibold text-white hover:underline">
-              Home
-            </a>
-            <a href="/impressum" className="text-[14px] font-semibold text-white hover:underline">
-              Impressum
-            </a>
-            <a href="/datenschutz" className="text-[14px] font-semibold text-white hover:underline">
-              Datenschutzerklärung
-            </a>
           </div>
-
         </div>
       </div>
     </footer>

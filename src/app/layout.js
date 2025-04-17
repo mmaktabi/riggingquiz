@@ -4,17 +4,18 @@ config.autoAddCss = false;
 import "./globals.css";
 
 import { Inter, Poppins } from 'next/font/google'
+import Head from "next/head";
 
 const inter = Inter({
   subsets: ['latin'],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'], // All available weights
-  variable:'--font-inter'
+  variable: '--font-inter'
 })
 
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'], // All available weights
-   variable:'--font-poppins'
+  variable: '--font-poppins'
 })
 export const metadata = {
   title: "RiggingQuiz",
@@ -24,6 +25,7 @@ export const metadata = {
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",// iOS-Unterstützung
   },
+
   keywords: [
     // Kernbegriffe Apex Riggingschule
     "Apex Riggingschule",
@@ -85,19 +87,20 @@ export const metadata = {
     "Veranstaltungssicherheit",
     "Professionelles Rigging",
     "Rigging Standards",
-    "Rigging Zertifikate", 
-    "Veranstaltungstechnik Quiz", 
-    "Quiz Veranstaltungstechnik", 
+    "Rigging Zertifikate",
+    "Veranstaltungstechnik Quiz",
+    "Quiz Veranstaltungstechnik",
 
   ],
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html  lang="de">
-<body className={`${inter.className} ${poppins.className}`} suppressHydrationWarning={true}>
-{children}
-        </body>
+    <html lang="de">
+
+      <body className={`${inter.className} ${poppins.className}`} suppressHydrationWarning={true}>
+        {children}
+      </body>
     </html>
   );
 }

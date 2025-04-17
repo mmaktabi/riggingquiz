@@ -24,7 +24,10 @@ export default function CTAButtons() {
         }}>
           <Image src="/rigging/app_store.svg" width={200} height={154} alt="Apple Store Logo" className="cursor-pointer" />
         </a>
-        <a onClick={() => handleStoreClick("In Kürze im Google Play Store auch verfügbar!")}>
+        <a onClick={() => {
+          handleStoreClick("Du wirst zum App Store weitergeleitet...");
+          window.open("https://play.google.com/store/apps/details?id=com.riggingschule.riggingquiz", "_blank");
+        }}>
           <Image src="/rigging/google_store.png" width={222} height={164} alt="Google Play Logo" className="cursor-pointer" />
         </a>
       </div>
